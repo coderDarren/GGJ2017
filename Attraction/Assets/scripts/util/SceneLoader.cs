@@ -25,10 +25,27 @@ namespace Util {
 		{
 			if (Instance == null)
 			{
+				DontDestroyOnLoad(gameObject);
 				Instance = this;
 				_canvas = GetComponent<Canvas>();
 				_canvasGroup = GetComponent<CanvasGroup>();
 			}
+			else
+			{
+				Destroy(gameObject);
+			}
+		}
+
+		void Start()
+		{
+			if (Instance == this)
+				StartCoroutine("WaitToStart");
+		}
+
+		IEnumerator WaitToStart()
+		{
+			yield return new WaitForSeconds(4);
+			LoadScene(GameScene.MENU);
 		}
 
 		/// ----------------------- TRANSITIONS -----------------------
@@ -36,13 +53,14 @@ namespace Util {
 		IEnumerator FadeSceneOut()
 		{
 			ApplicationLoader.Instance.StartLoading();
-			yield return new WaitForSeconds(0.75f);
+			while (!ApplicationLoader.Instance.sceneIsFadedOut)
+				yield return null;
 			SceneManager.LoadScene(_targetScene);
 		}
 
 		IEnumerator FadeSceneIn()
 		{
-			yield return new WaitForSeconds(0.5f);
+			yield return new WaitForSeconds(1);
 			ApplicationLoader.Instance.StopLoading();
 		}
 

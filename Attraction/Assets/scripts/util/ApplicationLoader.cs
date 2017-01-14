@@ -13,13 +13,14 @@ namespace Util {
 		public LoadingGears loadingGears;
 
 		public bool loading { get; private set; }
+		public bool sceneIsFadedOut { get; private set; }
 
 		Canvas _canvas;
 		CanvasGroup _canvasGroup;
 		float _transitionAlpha = 0;
-		float _fadeTransitionSmooth = 5;
+		float _fadeTransitionSmooth = 0.5f;
 
-		void Start()
+		void Awake()
 		{
 			if (Instance == null)
 			{
@@ -49,7 +50,7 @@ namespace Util {
 			//force load screen to be on top of all other screens
 			_canvas.sortingOrder = 1001;
 			_transitionAlpha = 0;
-			loadingGears.StartLoading();
+			//loadingGears.StartLoading();
 
 			while (_transitionAlpha < 0.98f)
 			{
@@ -58,6 +59,7 @@ namespace Util {
 				yield return new WaitForSeconds(Time.deltaTime);
 			}
 			_canvasGroup.alpha = 1;
+			sceneIsFadedOut = true;
 		}
 
 		IEnumerator FadeSceneIn()
@@ -73,7 +75,8 @@ namespace Util {
 				yield return new WaitForSeconds(Time.deltaTime);
 			}
 			_canvasGroup.alpha = 0;
-			loadingGears.StopLoading();
+			sceneIsFadedOut = false;
+			//loadingGears.StopLoading();
 			//force load screen to be under of all other screens (only after it is fully transparent)
 			_canvas.sortingOrder = -10;
 		}
