@@ -50,7 +50,7 @@ namespace Util {
 			//force load screen to be on top of all other screens
 			_canvas.sortingOrder = 1001;
 			_transitionAlpha = 0;
-			//loadingGears.StartLoading();
+			loadingGears.StartLoading();
 
 			while (_transitionAlpha < 0.98f)
 			{
@@ -76,7 +76,7 @@ namespace Util {
 			}
 			_canvasGroup.alpha = 0;
 			sceneIsFadedOut = false;
-			//loadingGears.StopLoading();
+			loadingGears.StopLoading();
 			//force load screen to be under of all other screens (only after it is fully transparent)
 			_canvas.sortingOrder = -10;
 		}
