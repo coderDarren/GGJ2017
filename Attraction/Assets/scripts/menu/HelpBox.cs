@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using Util;
-using Debug;
+using DebugServices;
 
 namespace Menu {
 

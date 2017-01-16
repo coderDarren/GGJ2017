@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Types;
-using Debug;
+using DebugServices;
 
 namespace Util {
 

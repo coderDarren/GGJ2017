@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Debug {
+namespace DebugServices {
 
 	/// Delegate class for Unity's Debug class
 	/// Will only permit debugging when Constants.DEBUG is true

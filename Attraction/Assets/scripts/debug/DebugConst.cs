@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-namespace Debug {
+namespace DebugServices {
 
 	public class DebugConst : MonoBehaviour {
 

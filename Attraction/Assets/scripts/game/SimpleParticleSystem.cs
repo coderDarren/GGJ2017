@@ -1,63 +1,159 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using Util;
 
 public class SimpleParticleSystem : MonoBehaviour {
 
-	public struct Particle 
+	public class Particle
 	{
 		public SpriteRenderer sprite;
-		public Transform transform;
+		public Vector3 direction;
+		public float velocity;
+		public float acceleration;
+		public float lifeTime;
 		public bool alive;
 		public Color targetColor;
-		public Particle(SpriteRenderer sr, Transform t)
+		public Color currentColor;
+
+		public Vector3 sizeVel;	//for smooth damp purposes
+		public Vector4 colorVel;	//for smooth damp purposes
+
+		float lifeSpan;
+		Color[] colors;
+		int currentColorIndex;
+
+		public Vector3 Position
+		{
+			get { return sprite.transform.position; }
+			set { sprite.transform.position = value; }
+		}
+
+		public Vector3 EulerAngles
+		{
+			get { return sprite.transform.eulerAngles; }
+			set { sprite.transform.eulerAngles = value; }
+		}
+
+		public Vector3 Size
+		{
+			get { return sprite.transform.localScale; }
+			set { sprite.transform.localScale = value; }
+		}
+
+		public Color SpriteColor
+		{
+			get { return sprite.color; }
+			set { sprite.color = value; }
+		}
+
+		public Particle(SpriteRenderer sr, Vector3 dir, float vel, float accel, float life, Color[] col)
 		{
 			sprite = sr;
-			transform = t;
-			alive = false;
-			targetColor = sprite.color;
+			direction = dir;
+			velocity = vel;
+			acceleration = accel;
+			lifeSpan = life;
+			colors = col;
+			targetColor = colors[0];
+			currentColor = Color.white;
+			alive = true;
+			lifeTime = 0;
+			currentColorIndex = 0;
+			sizeVel = Vector3.zero;
+			colorVel = Vector4.zero;
+		}
+
+		public void TickColor()
+		{
+			if (Utility.ColorsMatch(targetColor, SpriteColor))
+			{
+				currentColorIndex++;
+				if (currentColorIndex > colors.Length - 1) {
+					SpriteColor = targetColor;
+				} else {
+					targetColor = colors[currentColorIndex];
+				}
+			}
+		}
+
+		public void TickAccel()
+		{
+			velocity += acceleration;
+			if (velocity <= 0)
+				velocity = 0;	
+		}
+
+		public void TickLife()
+		{
+			lifeTime += Time.deltaTime;
+			if (lifeTime >= lifeSpan) {
+				alive = false;
+			}
 		}
 	}
 
-	public SpriteRenderer particle;
+	public GameObject particle;
 	public Transform parent;
 	public float lifeTime;
 	public float spawnRate;
 	public float startSizeMin;
 	public float startSizeMax;
 	public float endSize;
+	public float velocity;
+	public float acceleration;
 	public Color startColor;
-	public Color endColor;
+	public Color[] colors;
 
 	List<Particle> particles;
 
-	protected void SpawnParticle(Vector3 pos, Vector3 scale, Vector3 rot)
+	protected void Init()
 	{
-		SpriteRenderer sr = (SpriteRenderer)Instantiate(particle);
-		Particle p = new Particle(sr, sr.transform);
-		p.transform.position = pos;
-		p.transform.eulerAngles = rot;
-		p.transform.localScale = scale;
+		particles = new List<Particle>();
+	}
+
+	protected void SpawnParticle(Vector3 pos, Vector3 rot, Vector3 dir)
+	{
+		GameObject particleObj = (GameObject)Instantiate(particle);
+		particleObj.transform.parent = parent;
+		Particle p = new Particle(particleObj.GetComponent<SpriteRenderer>(), dir, velocity, acceleration, lifeTime, colors);
+		p.Position = pos;
+		p.EulerAngles = rot;
+		p.Size = Vector3.one * Random.Range(startSizeMin, startSizeMax);
+		p.SpriteColor = startColor;
+		p.currentColor = startColor;
 		particles.Add(p);
 	}
 
-	protected void Update()
-	{
-		for (int i = 0; i < particles.Count; i++)
-		{
-			//size
-		}
-	}
-
-	protected void DestroyDeadParticles()
+	protected void UpdateParticles()
 	{
 		for (int i = particles.Count - 1; i >= 0; i--)
 		{
-			if (particles[i].alive == false)
-			{
-				Destroy(particles[i].sprite);
+			//size
+			particles[i].Size = Vector3.SmoothDamp(particles[i].Size, Vector3.one * endSize, ref particles[i].sizeVel, lifeTime - particles[i].lifeTime);
+
+			//color
+			particles[i].currentColor.r = Mathf.SmoothDamp(particles[i].currentColor.r, particles[i].targetColor.r, ref particles[i].colorVel.x, 0.25f);
+			particles[i].currentColor.g = Mathf.SmoothDamp(particles[i].currentColor.g, particles[i].targetColor.g, ref particles[i].colorVel.y, 0.25f);
+			particles[i].currentColor.b = Mathf.SmoothDamp(particles[i].currentColor.b, particles[i].targetColor.b, ref particles[i].colorVel.z, 0.25f);
+			particles[i].currentColor.a = Mathf.SmoothDamp(particles[i].currentColor.a, particles[i].targetColor.a, ref particles[i].colorVel.w, 0.25f);
+			particles[i].SpriteColor = particles[i].currentColor;
+			particles[i].TickColor();
+
+			//rotation
+
+			//position
+			particles[i].Position += particles[i].direction * particles[i].velocity * Time.deltaTime;
+			particles[i].TickAccel();
+
+			particles[i] = particles[i];
+
+			particles[i].TickLife();
+			if (!particles[i].alive) {
+				Destroy(particles[i].sprite.gameObject);
 				particles.RemoveAt(i);
 			}
 		}
 	}
+
 }

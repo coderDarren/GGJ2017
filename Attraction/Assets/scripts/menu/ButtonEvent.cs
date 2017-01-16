@@ -2,7 +2,7 @@
 using System.Collections;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
-using Debug;
+using DebugServices;
 using Util;
 using Types;
 
