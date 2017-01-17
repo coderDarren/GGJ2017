@@ -8,8 +8,8 @@ public class SpriteColorOvertime : MonoBehaviour {
 	// ---------------------- PRIVATE MEMBERS ----------------------
 	SpriteRenderer  _sprite;
 	int    _targetColorIndex;
-	Color  _currentColor;
-	Color  _targetColor;
+	[HideInInspector] public Color currentColor;
+	[HideInInspector] public Color targetColor;
 
 	///Velocities for smoothing the color properties
 	float  _rVel;
@@ -21,13 +21,13 @@ public class SpriteColorOvertime : MonoBehaviour {
 	public Color[] colors;
 	public float   colorSmooth;
 	public bool    smoothDamp;
-
+	public bool    pause;
 	// ---------------------- UNITY EVENT FUNCTIONS ----------------------
 	void Start()
 	{
 		_sprite = GetComponent<SpriteRenderer>();
-		_currentColor = GetNextColor();
-		_targetColor = GetNextColor();
+		currentColor = GetNextColor();
+		targetColor = GetNextColor();
 		StartCoroutine("TransitionToNextColor");
 	}
 
@@ -35,27 +35,30 @@ public class SpriteColorOvertime : MonoBehaviour {
 
 	void SetColor()
 	{
-		_sprite.color = _currentColor;
+		_sprite.color = currentColor;
 	}
 
 	IEnumerator TransitionToNextColor()
 	{
 		while (true)
 		{
-			if (!smoothDamp)
-			{
-				_currentColor = Color.Lerp(_currentColor, _targetColor, colorSmooth * Time.deltaTime);
+			if (pause)
+				yield return null;
+			else {
+				if (!smoothDamp)
+				{
+					currentColor = Color.Lerp(currentColor, targetColor, colorSmooth * Time.deltaTime);
+				}
+				else 
+				{
+					currentColor.r = Mathf.SmoothDamp(currentColor.r, targetColor.r, ref _rVel, colorSmooth);
+					currentColor.g = Mathf.SmoothDamp(currentColor.g, targetColor.g, ref _gVel, colorSmooth);
+					currentColor.b = Mathf.SmoothDamp(currentColor.b, targetColor.b, ref _bVel, colorSmooth);
+					currentColor.a = Mathf.SmoothDamp(currentColor.a, targetColor.a, ref _aVel, colorSmooth);
+				}
+				SetColor();
+				CheckColorMatch(currentColor, targetColor);
 			}
-			else 
-			{
-				_currentColor.r = Mathf.SmoothDamp(_currentColor.r, _targetColor.r, ref _rVel, colorSmooth);
-				_currentColor.g = Mathf.SmoothDamp(_currentColor.g, _targetColor.g, ref _gVel, colorSmooth);
-				_currentColor.b = Mathf.SmoothDamp(_currentColor.b, _targetColor.b, ref _bVel, colorSmooth);
-				_currentColor.a = Mathf.SmoothDamp(_currentColor.a, _targetColor.a, ref _aVel, colorSmooth);
-			}
-			SetColor();
-			CheckColorMatch(_currentColor, _targetColor);
-
 			yield return null;
 		}
 	}
@@ -70,7 +73,7 @@ public class SpriteColorOvertime : MonoBehaviour {
 			Mathf.Abs(_c1.b - _c2.b) < 0.1f &&
 			Mathf.Abs(_c1.a - _c2.a) < 0.1f) 
 		{
-			_targetColor = GetNextColor();
+			targetColor = GetNextColor();
 		}
 	}
 
@@ -82,4 +85,5 @@ public class SpriteColorOvertime : MonoBehaviour {
 		_targetColorIndex = Random.Range(0, colors.Length);
 		return colors[_targetColorIndex];
 	}
+
 }

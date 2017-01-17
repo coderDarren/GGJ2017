@@ -88,6 +88,18 @@ namespace Menu
 			}
 		}
 
+		public bool PageIsExiting(PageType pageType)
+		{
+			for (int i = _inactivePages.Count - 1; i >= 0; i--)
+			{
+				if (pageType == _inactivePages[i].pageType)
+				{
+					return true;
+				}
+			}
+			return false;
+		}
+
 		/// <summary>
 		/// Looks for the page of type _pageType inside _activePages and returns the PageController associated with it
 		/// Returns null if the page of type _pageType could not be found

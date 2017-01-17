@@ -13,6 +13,31 @@ namespace Types {
 		PLAY
 	}
 
+	public enum GalaxyType
+	{
+		NONE,
+		GALAXY_VIEW,
+		HOME_GALAXY,
+		DAHKRI_GALAXY,
+		KYDOR_GALAXY,
+		ZAX_GALAXY,
+		MALIX_GALAXY,
+		XILYANTIPHOR_GALAXY,
+		VIDON_GALAXY,
+		RYKTAR_GALAXY
+	}
+
+	public enum GalaxyColor
+	{
+		BLUE,
+		RED,
+		PINK,
+		PURPLE,
+		ORANGE,
+		BLACK,
+		GREEN
+	}
+
 	public enum Hotkey 
 	{
 		L_CLICK=KeyCode.Mouse0,
