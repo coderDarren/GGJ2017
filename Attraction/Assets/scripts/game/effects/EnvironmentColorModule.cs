@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using Types;
+using Util;
 
 public class EnvironmentColorModule : MonoBehaviour {
 
@@ -39,30 +40,25 @@ public class EnvironmentColorModule : MonoBehaviour {
 
 	void ApplyColorSettings()
 	{
-		var c = clouds.colorOverLifetime;
-		c.color = currentColor.particlesColorOvertime;
-		clouds.startColor = currentColor.particlesStartColor;
 		targetParticlesGradient = currentColor.particlesColorOvertime;
 		targetBackgroundColor = currentColor.backgroundColor1;
 		StopCoroutine("FadeBackground");
 		StartCoroutine("FadeBackground");
-		//StopCoroutine("FadeClouds");
-		//StartCoroutine("FadeClouds");
+		StopCoroutine("FadeClouds");
+		StartCoroutine("FadeClouds");
 	}
 
 	IEnumerator FadeClouds()
 	{
 		var c = clouds.colorOverLifetime;
 		Gradient currGradient = c.color.gradient;
-
-		while (!ColorsMatch(clouds.startColor, currentColor.particlesStartColor)) {
-			clouds.startColor = Color.Lerp(clouds.startColor, currentColor.particlesStartColor, 5f * Time.deltaTime);
-			for (int i = 0; i < targetParticlesGradient.colorKeys.Length; i++) {
-				currGradient.colorKeys[i].color.r = Mathf.Lerp(currGradient.colorKeys[i].color.r, targetParticlesGradient.colorKeys[i].color.r, 10 * Time.deltaTime);
-			}
-
+		float timer = 0;
+		while (timer < 12) {
+			clouds.startColor = Color.Lerp(clouds.startColor, currentColor.particlesStartColor, 2 * Time.deltaTime);
+			currGradient = Utility.LerpGradient(currGradient, targetParticlesGradient, 5 * Time.deltaTime);
 			c.color = currGradient;
-			yield return new WaitForSeconds(Time.deltaTime);
+			timer += Time.deltaTime;
+			yield return null;
 		}
 
 		clouds.startColor = currentColor.particlesStartColor;
@@ -80,11 +76,11 @@ public class EnvironmentColorModule : MonoBehaviour {
 		float  _aVel = 0;
 
 		while (!ColorsMatch(col, targetBackgroundColor)) {
-			col.r = Mathf.SmoothDamp(col.r, targetBackgroundColor.r, ref _rVel, 5);
-			col.g = Mathf.SmoothDamp(col.g, targetBackgroundColor.g, ref _gVel, 5);
-			col.b = Mathf.SmoothDamp(col.b, targetBackgroundColor.b, ref _bVel, 5);
-			col.a = Mathf.SmoothDamp(col.a, targetBackgroundColor.a, ref _aVel, 5);
-			background.color = col;
+			//col.r = Mathf.SmoothDamp(col.r, targetBackgroundColor.r, ref _rVel, 5);
+			//col.g = Mathf.SmoothDamp(col.g, targetBackgroundColor.g, ref _gVel, 5);
+			//col.b = Mathf.SmoothDamp(col.b, targetBackgroundColor.b, ref _bVel, 5);
+			//col.a = Mathf.SmoothDamp(col.a, targetBackgroundColor.a, ref _aVel, 5);
+			background.color = Color.Lerp(background.color, targetBackgroundColor, 0.75f * Time.deltaTime);
 			yield return null;
 		}
 

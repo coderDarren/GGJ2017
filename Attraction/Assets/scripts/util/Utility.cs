@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.UI;
 using Types;
 using Menu;
+using DebugServices;
 
 namespace Util {
 
@@ -83,6 +84,30 @@ namespace Util {
 		#endregion
 
 		#region --------------- COLOR ---------------
+
+		public static Gradient LerpGradient(Gradient curr, Gradient target, float speed)
+		{
+			if (curr.colorKeys.Length != target.colorKeys.Length ||
+				curr.alphaKeys.Length != target.alphaKeys.Length)
+			{
+				Debugger.LogWarning("Unable to lerp gradients. Make sure 'curr' and 'target' have the same number of alpha and color keys.");
+				return curr;
+			}
+
+			GradientColorKey[] currColorKeys = curr.colorKeys;
+			//GradientAlphaKey[] currAlphaKeys = curr.alphaKeys;
+			GradientColorKey[] targetColorKeys = target.colorKeys;
+			//GradientAlphaKey[] targetAlphaKeys = target.alphaKeys;
+			Gradient ret = new Gradient();
+
+			for (int i = 0; i < currColorKeys.Length; i++)
+			{
+				currColorKeys[i].color = Color.Lerp(currColorKeys[i].color, targetColorKeys[i].color, speed);
+			}
+
+			ret.SetKeys(currColorKeys, curr.alphaKeys);
+			return ret;
+		}
 
 		
 		#endregion
