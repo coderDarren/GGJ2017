@@ -79,6 +79,11 @@ namespace Util {
 		{
 			_targetScene = Utility.SceneToString(_gameScene);
 
+			if (SceneManager.GetActiveScene().name == "splash")
+				ApplicationLoader.Instance.fadeTransitionSmooth = 0.5f;
+			else
+				ApplicationLoader.Instance.fadeTransitionSmooth = 2.5f;
+
 			if (_targetScene.Equals("NULL"))
 			{
 				Debugger.LogWarning("You tried to load a scene that does not exist.");

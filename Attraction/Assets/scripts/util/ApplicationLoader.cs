@@ -18,7 +18,7 @@ namespace Util {
 		Canvas _canvas;
 		CanvasGroup _canvasGroup;
 		float _transitionAlpha = 0;
-		float _fadeTransitionSmooth = 0.5f;
+		public float fadeTransitionSmooth = 0.5f;
 
 		void Awake()
 		{
@@ -54,7 +54,7 @@ namespace Util {
 
 			while (_transitionAlpha < 0.98f)
 			{
-				_transitionAlpha += _fadeTransitionSmooth * Time.deltaTime;
+				_transitionAlpha += fadeTransitionSmooth * Time.deltaTime;
 				_canvasGroup.alpha = _transitionAlpha;
 				yield return new WaitForSeconds(Time.deltaTime);
 			}
@@ -70,7 +70,7 @@ namespace Util {
 			{
 				if (!_canvasGroup)
 					_canvasGroup = GetComponent<CanvasGroup>();
-				_transitionAlpha -= _fadeTransitionSmooth * Time.deltaTime;
+				_transitionAlpha -= fadeTransitionSmooth * Time.deltaTime;
 				_canvasGroup.alpha = _transitionAlpha;
 				yield return new WaitForSeconds(Time.deltaTime);
 			}

@@ -18,6 +18,10 @@ public class EnvironmentColorModule : MonoBehaviour {
 
 	public SpriteRenderer background;
 	public ParticleSystem clouds;
+	public float backgroundFadeSpeed = 0.75f;
+	public float cloudStartColorFadeSpeed = 2;
+	public float cloudGradientFadeSpeed = 5;
+	public bool useAwakeColor = true;
 	public GalaxyColor awakeColor;
 	public EnvironmentColors blueEnvironment;
 	public EnvironmentColors purpleEnvironment;
@@ -35,7 +39,8 @@ public class EnvironmentColorModule : MonoBehaviour {
 	void Awake()
 	{
 		Instance = this;
-		SetEnvironmentColor(awakeColor);
+		if (useAwakeColor)
+			SetEnvironmentColor(awakeColor);
 	}
 
 	void ApplyColorSettings()
@@ -54,8 +59,8 @@ public class EnvironmentColorModule : MonoBehaviour {
 		Gradient currGradient = c.color.gradient;
 		float timer = 0;
 		while (timer < 12) {
-			clouds.startColor = Color.Lerp(clouds.startColor, currentColor.particlesStartColor, 2 * Time.deltaTime);
-			currGradient = Utility.LerpGradient(currGradient, targetParticlesGradient, 5 * Time.deltaTime);
+			clouds.startColor = Color.Lerp(clouds.startColor, currentColor.particlesStartColor, cloudStartColorFadeSpeed * Time.deltaTime);
+			currGradient = Utility.LerpGradient(currGradient, targetParticlesGradient, cloudGradientFadeSpeed * Time.deltaTime);
 			c.color = currGradient;
 			timer += Time.deltaTime;
 			yield return null;
@@ -75,12 +80,12 @@ public class EnvironmentColorModule : MonoBehaviour {
 		float  _bVel = 0;
 		float  _aVel = 0;
 
-		while (!ColorsMatch(col, targetBackgroundColor)) {
+		while (!ColorsMatch(background.color, targetBackgroundColor)) {
 			//col.r = Mathf.SmoothDamp(col.r, targetBackgroundColor.r, ref _rVel, 5);
 			//col.g = Mathf.SmoothDamp(col.g, targetBackgroundColor.g, ref _gVel, 5);
 			//col.b = Mathf.SmoothDamp(col.b, targetBackgroundColor.b, ref _bVel, 5);
 			//col.a = Mathf.SmoothDamp(col.a, targetBackgroundColor.a, ref _aVel, 5);
-			background.color = Color.Lerp(background.color, targetBackgroundColor, 0.75f * Time.deltaTime);
+			background.color = Color.Lerp(background.color, targetBackgroundColor, backgroundFadeSpeed * Time.deltaTime);
 			yield return null;
 		}
 
@@ -94,10 +99,10 @@ public class EnvironmentColorModule : MonoBehaviour {
 
 	bool ColorsMatch(Color _c1, Color _c2)
 	{
-		if (Mathf.Abs(_c1.r - _c2.r) < 0.07f &&
-			Mathf.Abs(_c1.g - _c2.g) < 0.07f &&
-			Mathf.Abs(_c1.b - _c2.b) < 0.07f &&
-			Mathf.Abs(_c1.a - _c2.a) < 0.07f) 
+		if (Mathf.Abs(_c1.r - _c2.r) < 0.01f &&
+			Mathf.Abs(_c1.g - _c2.g) < 0.01f &&
+			Mathf.Abs(_c1.b - _c2.b) < 0.01f &&
+			Mathf.Abs(_c1.a - _c2.a) < 0.01f) 
 		{
 			return true;
 		}

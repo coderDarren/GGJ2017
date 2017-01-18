@@ -58,10 +58,10 @@ public class LevelSceneController : MonoBehaviour {
 
 		Transform t = galaxy.camTarget;
 		float distance = Vector3.Distance(cam.position, t.position);
-
+		float totalDistance = distance;
 		while (distance > 0.1f)
 		{
-			cam.position = Vector3.Lerp(cam.position, t.position, zoomSpeed * Time.deltaTime);
+			cam.position = Vector3.Lerp(cam.position, t.position, ((totalDistance - distance)*0.1f + zoomSpeed) * Time.deltaTime);
 			distance = Vector3.Distance(cam.position, t.position);
 			yield return null;
 		}
