@@ -109,7 +109,7 @@ public class LevelSceneController : MonoBehaviour {
 				break;
 			case GalaxyType.VIDON_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", vidonGalaxy); 
-				environment.SetEnvironmentColor(GalaxyColor.ORANGE);
+				environment.SetEnvironmentColor(GalaxyColor.PINK);
 				break;
 			case GalaxyType.RYKTAR_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", ryktarGalaxy); 
