@@ -19,7 +19,8 @@ namespace Menu {
 		XILYANTIPHOR_GALAXY,
 		VIDON_GALAXY,
 		RKYTAR_GALAXY,
-		PLAY
+		PLAY,
+		LINK
 	}
 
 }
