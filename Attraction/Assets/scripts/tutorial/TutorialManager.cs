@@ -8,7 +8,7 @@ public class TutorialManager : MonoBehaviour {
 
 	public static TutorialManager Instance;
 
-	const string INITIALIZED = "INITIALIZED";
+	const string INITIALIZED = "TUTORIALS_INITIALIZED";
 
 	void Awake()
 	{

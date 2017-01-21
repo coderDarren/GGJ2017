@@ -15,13 +15,13 @@ namespace Util {
 		public float expandRate;
 		public float fadeSpeed;
 
-		public TutorialType forTutorial;
-		int tutorialStatus;
+		public GalaxyType galaxy;
+		int galaxyStatus;
 
 		void OnEnable()
 		{
-			tutorialStatus = TutorialManager.Instance.GetStatus(forTutorial);
-			if (tutorialStatus != 1)
+			galaxyStatus = ProgressManager.Instance.GetStatus(galaxy);
+			if (galaxyStatus != 1)
 				StartCoroutine("RunRippleEffect");
 		}
 
