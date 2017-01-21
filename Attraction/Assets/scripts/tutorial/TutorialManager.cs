@@ -38,12 +38,12 @@ public class TutorialManager : MonoBehaviour {
 		}
 	}
 
-	int GetStatus(string pref)
+	public int GetStatus(string pref)
 	{
 		return PlayerPrefs.GetInt(pref);
 	}
 
-	int GetStatus(TutorialType tutorial)
+	public int GetStatus(TutorialType tutorial)
 	{
 		return PlayerPrefs.GetInt(tutorial.ToString());
 	}
