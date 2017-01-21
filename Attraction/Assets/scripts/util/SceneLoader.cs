@@ -20,6 +20,9 @@ namespace Util {
 		CanvasGroup _canvasGroup;
 		float  _transitionAlpha;
 		string _targetScene;
+		AudioManager audio;
+
+		public GameScene gameScene { get; private set; }
 
 		void Awake()
 		{
@@ -38,8 +41,10 @@ namespace Util {
 
 		void Start()
 		{
-			if (Instance == this)
+			if (Instance == this) {
+				audio = AudioManager.Instance;
 				StartCoroutine("WaitToStart");
+			}
 		}
 
 		IEnumerator WaitToStart()
@@ -67,6 +72,7 @@ namespace Util {
 		void OnLevelWasLoaded(int level)
 		{
 			Debugger.Log(SceneManager.GetActiveScene().name + " was loaded.", DebugFlag.EVENT);
+			audio.SetSceneBasedAudio(gameScene);
 			StartCoroutine("FadeSceneIn");
 		}
 
@@ -89,6 +95,8 @@ namespace Util {
 				Debugger.LogWarning("You tried to load a scene that does not exist.");
 				return;
 			}
+
+			gameScene = _gameScene;
 
 			StartCoroutine("FadeSceneOut");
 		}

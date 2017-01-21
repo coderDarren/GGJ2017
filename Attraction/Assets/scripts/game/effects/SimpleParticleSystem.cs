@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Util;
+using PoolingServices;
 
 public class SimpleParticleSystem : MonoBehaviour {
 
@@ -22,6 +23,8 @@ public class SimpleParticleSystem : MonoBehaviour {
 		float lifeSpan;
 		Color[] colors;
 		int currentColorIndex;
+
+		public int poolId { get; private set; }
 
 		public Vector3 Position
 		{
@@ -47,8 +50,9 @@ public class SimpleParticleSystem : MonoBehaviour {
 			set { sprite.color = value; }
 		}
 
-		public Particle(SpriteRenderer sr, Vector3 dir, float vel, float accel, float life, Color[] col)
+		public Particle(SpriteRenderer sr, int poolId, Vector3 dir, float vel, float accel, float life, Color[] col)
 		{
+			this.poolId = poolId;
 			sprite = sr;
 			direction = dir;
 			velocity = vel;
@@ -95,6 +99,7 @@ public class SimpleParticleSystem : MonoBehaviour {
 
 	public GameObject particle;
 	public Transform parent;
+	public int maxParticles;
 	public float lifeTime;
 	public float spawnRate;
 	public float startSizeMin;
@@ -106,17 +111,24 @@ public class SimpleParticleSystem : MonoBehaviour {
 	public Color[] colors;
 
 	List<Particle> particles;
+	Pool pool;
 
 	protected void Init()
 	{
 		particles = new List<Particle>();
+		pool = new Pool();
+		pool.ConfigurePool(parent, particle, maxParticles);
 	}
 
 	protected void SpawnParticle(Vector3 pos, Vector3 rot, Vector3 dir)
 	{
-		GameObject particleObj = (GameObject)Instantiate(particle);
-		particleObj.transform.parent = parent;
-		Particle p = new Particle(particleObj.GetComponent<SpriteRenderer>(), dir, velocity, acceleration, lifeTime, colors);
+		//GameObject particleObj = (GameObject)Instantiate(particle);
+		//particleObj.transform.parent = parent;
+		int poolObjId = pool.GetObject();
+		if (poolObjId == -1) //no available objects left in the pool
+			return;
+		Transform particleObj = pool.ObjectTransform(poolObjId);
+		Particle p = new Particle(particleObj.GetComponent<SpriteRenderer>(), poolObjId, dir, velocity, acceleration, lifeTime, colors);
 		p.Position = pos;
 		p.EulerAngles = rot;
 		p.Size = Vector3.one * Random.Range(startSizeMin, startSizeMax);
@@ -150,7 +162,7 @@ public class SimpleParticleSystem : MonoBehaviour {
 
 			particles[i].TickLife();
 			if (!particles[i].alive) {
-				Destroy(particles[i].sprite.gameObject);
+				pool.DiscardObject(particles[i].poolId);
 				particles.RemoveAt(i);
 			}
 		}

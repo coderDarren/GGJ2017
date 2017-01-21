@@ -68,6 +68,11 @@ public class LevelSceneController : MonoBehaviour {
 
 		activeZone = galaxy;
 		pageManager.LoadPage(activeZone.pageToLoad);
+		
+		if (activeZone == galaxyViewPoint)
+		{
+			TutorialManager.Instance.StartTutorial(TutorialType.GALAXIES);
+		}
 	}
 
 	public void ViewGalaxy(GalaxyType galaxyType)

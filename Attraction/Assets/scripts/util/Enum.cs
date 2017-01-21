@@ -38,6 +38,15 @@ namespace Types {
 		GREEN
 	}
 
+	public enum TutorialType
+	{
+		GALAXIES,
+		CONTROLS_ROTATE_SHIP,
+		CONTROLS_LAUNCH_SHIP,
+		GRAVITY_WELLS,
+		ANTIGRAVITY_WELLS
+	}
+
 	public enum Hotkey 
 	{
 		L_CLICK=KeyCode.Mouse0,
