@@ -73,6 +73,9 @@ namespace Util {
 		{
 			Debugger.Log(SceneManager.GetActiveScene().name + " was loaded.", DebugFlag.EVENT);
 			audio.SetSceneBasedAudio(gameScene);
+			if (gameScene == GameScene.PLAY) {
+				LevelLoader.Instance.LoadLevelInfo();
+			}
 			StartCoroutine("FadeSceneIn");
 		}
 

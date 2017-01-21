@@ -33,7 +33,11 @@ public class ProgressManager : MonoBehaviour {
 		Array galaxies = Enum.GetValues(typeof(GalaxyType));
 		foreach (GalaxyType galaxy in galaxies)
 		{
-			PlayerPrefs.SetInt(galaxy.ToString(), 0);
+			PlayerPrefs.SetInt(galaxy.ToString() + 0, -1);
+			for (int i = 1; i <= 10; i++) {
+				int value = i == 1 ? 0 : -1; //first level of the galaxy will always be available
+				PlayerPrefs.SetInt(galaxy.ToString() + i.ToString(), value);
+			}
 		}
 	}
 
@@ -42,13 +46,18 @@ public class ProgressManager : MonoBehaviour {
 		return PlayerPrefs.GetInt(pref);
 	}
 
-	public int GetStatus(GalaxyType galaxy)
+	public int GetStatus(GalaxyType galaxy, int level)
 	{
-		return PlayerPrefs.GetInt(galaxy.ToString());
+		return PlayerPrefs.GetInt(galaxy.ToString() + level.ToString());
 	}
 
-	public void CompleteProgress(GalaxyType galaxy)
+	public void CompleteProgress(GalaxyType galaxy, int level)
 	{
-		PlayerPrefs.SetInt(galaxy.ToString(), 1);
+		SetProgress(galaxy, level, 1);
+	}
+
+	public void SetProgress(GalaxyType galaxy, int level, int progress)
+	{
+		PlayerPrefs.SetInt(galaxy.ToString() + level.ToString(), progress);
 	}
 }
