@@ -9,6 +9,15 @@ public class ShipController : MonoBehaviour {
     public float accel = 0.01f;
     public float coast = 1;
 
+	Vector3 startPos;
+	Quaternion initialRot;
+
+
+	void Awake() {
+		startPos = this.transform.position;
+		initialRot = this.transform.rotation;
+	}
+
     enum State { ACCEL, DECCEL, THRUST }
     State state;
     State prevState;
@@ -33,6 +42,10 @@ public class ShipController : MonoBehaviour {
         		state = prevState;
         	}
         }
+		if (Input.GetKeyDown(KeyCode.Space)) {
+			this.transform.position = startPos;
+			this.transform.rotation = initialRot;
+		}
     }
 
     void Accelerate()
