@@ -26,7 +26,7 @@ public class ShipController : MonoBehaviour {
 		startTime = Time.time;
 	}
 
-    enum State { WAIT, ACCEL, DECCEL, THRUST, RESET, WIN }
+	enum State {ACCEL, DECCEL, THRUST, RESET, WIN, WAIT, }
     State state;
     State prevState;
 
@@ -39,7 +39,8 @@ public class ShipController : MonoBehaviour {
         	case State.ACCEL: Accelerate(); break;
         	case State.DECCEL: Deccelerate(); break;
         	case State.THRUST: Thrust(); break;
-			case State.RESET: MoveToStart(); break;			
+			case State.RESET: MoveToStart(); break;	
+			case State.WIN: OrbitPlanet(); break;
         }
 
         if (Input.GetKey(KeyCode.Mouse0)) {
@@ -102,6 +103,7 @@ public class ShipController : MonoBehaviour {
 	public void ReturnToBeginning() 
 	{
 		transform.position = resetPos.position;
+		transform.rotation = resetPos.rotation;
 	}
 
 	void MoveToStart()
@@ -120,19 +122,24 @@ public class ShipController : MonoBehaviour {
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
-		if(col.gameObject.tag.Equals("Planet")) {
-			Debug.Log("Hit Planet");
-			state = State.WIN;
+		if(col.gameObject.tag.Equals("Planet")) {			
 			planet = col.gameObject.transform;
+			state = State.WIN;
+			GetComponent<BoxCollider2D>().enabled = false;
 		}
 	}
 
 	void OrbitPlanet()
 	{
-		Vector3 relativePos = (planet.position + new Vector3(0,1.5f,0)) - transform.position;
-		Quaternion rotation = Quaternion.LookRotation(relativePos);
-		Quaternion current = transform.localRotation;
-		transform.localRotation = Quaternion.Slerp(current, rotation, Time.deltaTime);
-		transform.Translate(0,0,3*Time.deltaTime);
+//		Vector3 relativePos = (planet.position + new Vector3(0,1.5f,0)) - transform.position;
+//		Quaternion rotation = Quaternion.LookRotation(relativePos);
+//		Quaternion current = transform.localRotation;
+//		transform.localRotation = Quaternion.Slerp(current, rotation, Time.deltaTime);
+//		transform.Translate(0,0,1*Time.deltaTime);
+		Vector3 vectorToTarget = planet.position - transform.position;
+		float angle = (Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg) - 90;
+		Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
+		transform.rotation = Quaternion.Slerp(transform.rotation, q, (resetSpeed * .75f) * Time.deltaTime);
+		transform.position += resetSpeed * transform.up * Time.deltaTime;
 	}
 }
