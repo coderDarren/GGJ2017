@@ -19,6 +19,5 @@ public class ZoomToGalaxyEvent : ButtonEvent {
 	{
 		base.OnItemUp();
 		scene.ViewGalaxy(galaxy);
-		ProgressManager.Instance.CompleteProgress(galaxy, 0);
 	}
 }
