@@ -30,8 +30,9 @@ public class ShipController : MonoBehaviour {
     public State state;
     State prevState;
 
-    public float vel;
+    float vel;
     float thrust;
+    public bool dying;
 
     void Start() 
 	{
@@ -70,7 +71,7 @@ public class ShipController : MonoBehaviour {
 			case State.WIN: OrbitPlanet(); break;
         }
 
-        if (state != State.WAIT) {
+        if (state != State.WAIT && state != State.RESET) {
 
 	        if (Input.GetKey(KeyCode.Mouse0)) {
 	        	if (state != State.THRUST) {
@@ -100,6 +101,7 @@ public class ShipController : MonoBehaviour {
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
     	vel += accel;
     	vel = Mathf.Clamp(vel, 0, power + thrust);
+    	vel *= dying ? 0 : 1;
     	transform.position += vel * transform.up * Time.deltaTime;
 
     	if (vel >= power)
@@ -112,6 +114,7 @@ public class ShipController : MonoBehaviour {
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
     	vel -= accel;
     	vel = Mathf.Clamp(vel, coast, power + thrust);
+    	vel *= dying ? 0 : 1;
     	transform.position += vel * transform.up * Time.deltaTime;
     }
 
@@ -121,17 +124,20 @@ public class ShipController : MonoBehaviour {
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
     	vel += thrust;
     	vel = Mathf.Clamp(vel, 0, power + thrust);
+    	vel *= dying ? 0 : 1;
     	transform.position += vel * transform.up * Time.deltaTime;
     }
 
 	public void ReduceLives()
 	{
-		lives --;
-		OnLivesChanged(lives);
-
-		if (lives >= 1)
+		if (lives >= 1) {
+			lives --;
+			OnLivesChanged(lives);
 			ReturnToBeginning();
+		}
 		else if (lives == 0) {
+			transform.position = resetPos.position;
+			transform.rotation = resetPos.rotation;
 			StartCoroutine("HandleLoss");
 		}
 	}
@@ -142,15 +148,19 @@ public class ShipController : MonoBehaviour {
 		transform.rotation = resetPos.rotation;
 		transform.localScale = Vector3.one * 0.15f;
 		state = State.RESET;
+		dying = false;
 	}
 
 	void MoveToStart()
 	{
-		float distCovered = (Time.time - startTime) * resetSpeed;
-		float fracJourney = distCovered / GetJourneyLength();
-		transform.position = Vector3.Lerp(resetPos.position, startPos.position, fracJourney);
-		if (Vector3.Distance(transform.position, startPos.position) < 0.025f)
+		float totalDist = Vector3.Distance(resetPos.position, startPos.position);
+		float currDist = Vector3.Distance(transform.position, startPos.position);
+		transform.position = Vector3.Lerp(transform.position, startPos.position, (totalDist - currDist + 0.01f) * resetSpeed * Time.deltaTime);
+		if (Vector3.Distance(transform.position, startPos.position) < 0.015f){
+			vel = 0;
+			thrust = 0;
 			state = State.ACCEL;
+		}
 	}
 
 	float GetJourneyLength()

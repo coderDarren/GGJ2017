@@ -58,8 +58,11 @@ public class GravityWell : MonoBehaviour {
 
 	void OnPlayerLeft(GravityWell well)
 	{
-		if (this == well)
+		if (this == well){
+			destroyPlayer = false;
+			playerDied = false;
 			containsPlayer = false;
+		}
 		wellsInfluencingPlayer--;
 	}
 
@@ -68,8 +71,7 @@ public class GravityWell : MonoBehaviour {
 		distance = Vector3.Distance(player.position, transform.position);
 
 		if (distance < radius / 6) {
-			//player.GetComponent<ShipController>().power = 0;
-			//player.GetComponent<ShipController>().coast = 0;
+			shipController.dying = true;
 			destroyPlayer = true;
 		}
 
@@ -90,11 +92,12 @@ public class GravityWell : MonoBehaviour {
      	Quaternion target = Quaternion.Euler(0f, 0f, angleToPlayer - 90 * influence);
      	player.rotation = Quaternion.Lerp(player.rotation, target, magnitude * force * Time.deltaTime);
 
-     	if (containsPlayer || wellsInfluencingPlayer == 0) {
+     	if (containsPlayer || wellsInfluencingPlayer == 0 && !playerDied) {
      		HandlePlayerScale();
      	}
 	}
 
+	bool playerDied;
 	void HandlePlayerScale()
 	{
 		if (distance < radius){
@@ -107,13 +110,11 @@ public class GravityWell : MonoBehaviour {
 			playerScale = 0.01f;
 		
 		if (player.localScale.x <= 0.035f) {
-			shipController.state = ShipController.State.RESET;
+			GameObject.FindObjectOfType<ExplosionParticles>().transform.position = player.position;
+			GameObject.FindObjectOfType<ExplosionParticles>().SpawnParticles();
 			shipController.ReduceLives();
 			OnPlayerLeft(this);
-			destroyPlayer = false;
-			//GameObject.FindObjectOfType<ExplosionParticles>().transform.position = player.position;
-			//GameObject.FindObjectOfType<ExplosionParticles>().SpawnParticles();
-			//shipController.ReduceLives();
+			playerDied = true;
 		} else {
 			player.localScale = Vector3.Lerp(player.localScale, Vector3.one * playerScale, 1.5f * Time.deltaTime);
 		}
