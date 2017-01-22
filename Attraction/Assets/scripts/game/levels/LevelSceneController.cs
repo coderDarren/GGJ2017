@@ -67,11 +67,21 @@ public class LevelSceneController : MonoBehaviour {
 		}
 
 		activeZone = galaxy;
-		pageManager.LoadPage(activeZone.pageToLoad);
 		
 		if (activeZone == galaxyViewPoint)
 		{
+			pageManager.LoadPage(activeZone.pageToLoad);
 			TutorialManager.Instance.StartTutorial(TutorialType.GALAXIES);
+		}
+		else {
+			int status = ProgressManager.Instance.GetStatus(activeGalaxy, 0);
+			if (status == 0) {
+				pageManager.LoadPage(PageType.GALAXY_INFO);
+				GalaxyInfoPage infoPage = GameObject.FindObjectOfType<GalaxyInfoPage>();
+				infoPage.ConfigureInfo(activeGalaxy, activeZone.pageToLoad);
+			} else {
+				pageManager.LoadPage(activeZone.pageToLoad);
+			}
 		}
 	}
 

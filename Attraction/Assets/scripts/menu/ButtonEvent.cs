@@ -107,10 +107,10 @@ namespace Menu {
 		//--------------- PRIVATE MEMBERS ---------------
 		RectTransform   _rect;
 
-		bool _onItem; //set during enter and exit events
-		bool _down;
-		bool _drag;
-		bool _effectIsRunning;
+		protected bool _onItem; //set during enter and exit events
+		protected bool _down;
+		protected bool _drag;
+		protected bool _effectIsRunning;
 
 		enum ButtonEffect
 		{
@@ -366,10 +366,17 @@ namespace Menu {
 			}
 		}
 
-		void HandleButtonEffect()
+		protected void HandleButtonEffect()
 		{
 			if (_drag) //dont trigger an effect when the user is interacting with the button
 				return;
+
+			if (effectOptions.effectOne.useEffect)
+				_activeEffect = ButtonEffect.ONE;
+			else if (effectOptions.effectTwo.useEffect)
+				_activeEffect = ButtonEffect.TWO;
+			else if (effectOptions.effectThree.useEffect)
+				_activeEffect = ButtonEffect.THREE;
 
 			switch (_activeEffect)
 			{
@@ -388,7 +395,7 @@ namespace Menu {
 			}
 		}
 
-		void StopButtonEffect()
+		protected void StopButtonEffect()
 		{
 			if (_drag) //dont trigger an effect when the user is interacting with the button
 				return;
@@ -398,6 +405,21 @@ namespace Menu {
 				StopCoroutine("EndEffect");
 				StartCoroutine("EndEffect");
 			}
+		}
+
+		protected void ApplyRestProperties()
+		{
+			ApplyItemModifications(spriteOptions.restSprite, colorOptions.restColor, orientationOptions.restOrientation);
+		}
+
+		protected void ApplyHoverProperties()
+		{
+			ApplyItemModifications(spriteOptions.hoverSprite, colorOptions.hoverColor, orientationOptions.hoverOrientation);
+		}
+
+		protected void ApplyClickProperties()
+		{
+			ApplyItemModifications(spriteOptions.clickSprite, colorOptions.clickColor, orientationOptions.clickOrientation);
 		}
 
 		#endregion
@@ -442,16 +464,23 @@ namespace Menu {
 		public virtual void OnItemEnter()
 		{
 			_onItem = true;
-			ApplyItemModifications(spriteOptions.hoverSprite, colorOptions.hoverColor, orientationOptions.hoverOrientation);
+			ApplyHoverProperties();
 			Debugger.Log("enter", DebugFlag.EVENT);
+
+			//#if UNITY_EDITOR && !(UNITY_ANDROID || UNITY_IOS)
 			HandleButtonEffect();
+			//#endif
 		}
 
 		public virtual void OnItemExit()
 		{
 			_onItem = false;
-			ApplyItemModifications(spriteOptions.restSprite, colorOptions.restColor, orientationOptions.restOrientation);
+			ApplyRestProperties();
+			
+			//#if UNITY_EDITOR && !(UNITY_ANDROID || UNITY_IOS)
 			StopButtonEffect();
+			//#endif
+			
 			Debugger.Log("exit", DebugFlag.EVENT);
 		}
 

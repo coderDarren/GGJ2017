@@ -33,12 +33,19 @@ public class ProgressManager : MonoBehaviour {
 		Array galaxies = Enum.GetValues(typeof(GalaxyType));
 		foreach (GalaxyType galaxy in galaxies)
 		{
-			PlayerPrefs.SetInt(galaxy.ToString() + 0, -1);
+			PlayerPrefs.SetInt(galaxy.ToString() + "0", -1);
 			for (int i = 1; i <= 10; i++) {
 				int value = i == 1 ? 0 : -1; //first level of the galaxy will always be available
 				PlayerPrefs.SetInt(galaxy.ToString() + i.ToString(), value);
 			}
 		}
+		PlayerPrefs.SetInt(INITIALIZED, 1);
+		PlayerPrefs.SetInt(GalaxyType.HOME_GALAXY.ToString() + "0", 0); //home should always be available - especially after a progress reset
+	}
+
+	public void ResetProgress()
+	{
+		InitializeProgress();
 	}
 
 	public int GetStatus(string pref)

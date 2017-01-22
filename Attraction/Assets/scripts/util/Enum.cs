@@ -47,6 +47,18 @@ namespace Types {
 		ANTIGRAVITY_WELLS
 	}
 
+	public enum AudioState 
+	{
+		ON,
+		OFF
+	}
+
+	public enum AudioType
+	{
+		MUSIC,
+		SFX
+	}
+
 	public enum Hotkey 
 	{
 		L_CLICK=KeyCode.Mouse0,

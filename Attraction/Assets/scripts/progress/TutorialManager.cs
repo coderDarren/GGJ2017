@@ -36,6 +36,12 @@ public class TutorialManager : MonoBehaviour {
 		{
 			PlayerPrefs.SetInt(tutorial.ToString(), 0);
 		}
+		PlayerPrefs.SetInt(INITIALIZED, 1);
+	}
+
+	public void ResetTutorials()
+	{
+		InitializeTutorials();
 	}
 
 	public int GetStatus(string pref)

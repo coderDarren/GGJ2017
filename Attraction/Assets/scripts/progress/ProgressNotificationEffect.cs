@@ -21,7 +21,7 @@ public class ProgressNotificationEffect : MonoBehaviour {
 	void OnEnable()
 	{
 		galaxyStatus = ProgressManager.Instance.GetStatus(galaxy, level);
-		if ((level == 0 && galaxyStatus != 1) ||
+		if ((level == 0 && galaxyStatus == 0) ||
 			(level > 0 && galaxyStatus == 0))
 			StartCoroutine("RunRippleEffect");
 	}
