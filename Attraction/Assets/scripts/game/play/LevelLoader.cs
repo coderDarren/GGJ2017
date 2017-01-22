@@ -15,7 +15,7 @@ public class LevelLoader : MonoBehaviour {
 	public LeveLInfo[] levelInfo;
 
 	GalaxyType galaxy;
-	LeveLInfo targetInfo;
+	public LeveLInfo targetInfo { get; private set; }
 	int level;
 
 	void Awake()

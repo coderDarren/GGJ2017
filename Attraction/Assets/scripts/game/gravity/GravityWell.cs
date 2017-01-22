@@ -16,6 +16,7 @@ public class GravityWell : MonoBehaviour {
 	public float radius;
 	public float force;
 
+	ShipController shipController;
 	Transform player;
 	float distance;
 	float magnitude;
@@ -31,6 +32,7 @@ public class GravityWell : MonoBehaviour {
 	void Start()
 	{
 		player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
+		shipController = player.GetComponent<ShipController>();
 		influence = gravityType == GravityType.NORMAL ? 1 : -1;
 		playerScale = 0.2f;
 	}
@@ -66,8 +68,8 @@ public class GravityWell : MonoBehaviour {
 		distance = Vector3.Distance(player.position, transform.position);
 
 		if (distance < radius / 6) {
-			player.GetComponent<ShipController>().power = 0;
-			player.GetComponent<ShipController>().coast = 0;
+			//player.GetComponent<ShipController>().power = 0;
+			//player.GetComponent<ShipController>().coast = 0;
 			destroyPlayer = true;
 		}
 
@@ -102,7 +104,18 @@ public class GravityWell : MonoBehaviour {
 			playerScale = 0.15f;
 		}
 		if (destroyPlayer)
-			playerScale = 0;
-		player.localScale = Vector3.Lerp(player.localScale, Vector3.one * playerScale, 1.5f * Time.deltaTime);
+			playerScale = 0.01f;
+		
+		if (player.localScale.x <= 0.035f) {
+			shipController.state = ShipController.State.RESET;
+			shipController.ReduceLives();
+			OnPlayerLeft(this);
+			destroyPlayer = false;
+			//GameObject.FindObjectOfType<ExplosionParticles>().transform.position = player.position;
+			//GameObject.FindObjectOfType<ExplosionParticles>().SpawnParticles();
+			//shipController.ReduceLives();
+		} else {
+			player.localScale = Vector3.Lerp(player.localScale, Vector3.one * playerScale, 1.5f * Time.deltaTime);
+		}
 	}
 }

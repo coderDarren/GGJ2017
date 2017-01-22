@@ -1,7 +1,14 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Menu;
+using Types;
 
 public class ShipController : MonoBehaviour {
+
+	public delegate void LifeDelegate(int lives);
+	public static event LifeDelegate OnLivesChanged;
+	public delegate void CountdownDelegate(int time);
+	public static event CountdownDelegate OnCountdown;
 
 	public float power = 2;    //max speed before deccel, TBD by player
 	public float thrustPower = 1;
@@ -19,19 +26,39 @@ public class ShipController : MonoBehaviour {
 	public float resetSpeed = 2f;
 	Quaternion initialRot;
 
-	void Start() 
+	public enum State {ACCEL, DECCEL, THRUST, RESET, WIN, WAIT, }
+    public State state;
+    State prevState;
+
+    public float vel;
+    float thrust;
+
+    void Start() 
 	{
 		startPos.position = this.transform.position;
 		initialRot = this.transform.rotation;
 		startTime = Time.time;
+		state = State.WAIT;
+		StartCoroutine("WaitToLaunch");
 	}
 
-	enum State {ACCEL, DECCEL, THRUST, RESET, WIN, WAIT, }
-    State state;
-    State prevState;
+	IEnumerator WaitToLaunch()
+	{
+		TutorialManager.Instance.StartTutorial(TutorialType.HOW_TO_PLAY);
+		int status = TutorialManager.Instance.GetStatus(TutorialType.HOW_TO_PLAY);
+		while (status == 0) {
+			status = TutorialManager.Instance.GetStatus(TutorialType.HOW_TO_PLAY);
+			yield return null;
+		}
 
-    float vel;
-    float thrust;
+		int countdown = 5;
+		while (countdown >= 0) {
+			OnCountdown(countdown);
+			countdown--;
+			yield return new WaitForSeconds(1);
+		}
+		state = State.ACCEL;
+	}
 
     void Update () {        
         switch (state) {
@@ -43,20 +70,23 @@ public class ShipController : MonoBehaviour {
 			case State.WIN: OrbitPlanet(); break;
         }
 
-        if (Input.GetKey(KeyCode.Mouse0)) {
-        	if (state != State.THRUST) {
-        		prevState = state;
-        		state = State.THRUST;
-        	}
-        } else if (Input.GetKeyUp(KeyCode.Mouse0)) {
-        	if (state == State.THRUST) {
-        		state = prevState;
-        	}
-        }
-		if (Input.GetKeyDown(KeyCode.Space)) {
-			this.transform.position = startPos.position;
-			this.transform.rotation = initialRot;
-		}
+        if (state != State.WAIT) {
+
+	        if (Input.GetKey(KeyCode.Mouse0)) {
+	        	if (state != State.THRUST) {
+	        		prevState = state;
+	        		state = State.THRUST;
+	        	}
+	        } else if (Input.GetKeyUp(KeyCode.Mouse0)) {
+	        	if (state == State.THRUST) {
+	        		state = prevState;
+	        	}
+	        }
+			if (Input.GetKeyDown(KeyCode.Space)) {
+				this.transform.position = startPos.position;
+				this.transform.rotation = initialRot;
+			}
+    	}
     }
 
 	public void Wait()
@@ -96,14 +126,22 @@ public class ShipController : MonoBehaviour {
 
 	public void ReduceLives()
 	{
-		ReturnToBeginning();
 		lives --;
+		OnLivesChanged(lives);
+
+		if (lives >= 1)
+			ReturnToBeginning();
+		else if (lives == 0) {
+			StartCoroutine("HandleLoss");
+		}
 	}
 
 	public void ReturnToBeginning() 
 	{
 		transform.position = resetPos.position;
 		transform.rotation = resetPos.rotation;
+		transform.localScale = Vector3.one * 0.15f;
+		state = State.RESET;
 	}
 
 	void MoveToStart()
@@ -111,7 +149,7 @@ public class ShipController : MonoBehaviour {
 		float distCovered = (Time.time - startTime) * resetSpeed;
 		float fracJourney = distCovered / GetJourneyLength();
 		transform.position = Vector3.Lerp(resetPos.position, startPos.position, fracJourney);
-		if (transform.position == startPos.position)
+		if (Vector3.Distance(transform.position, startPos.position) < 0.025f)
 			state = State.ACCEL;
 	}
 
@@ -125,6 +163,7 @@ public class ShipController : MonoBehaviour {
 		if(col.gameObject.tag.Equals("Planet")) {			
 			planet = col.gameObject.transform;
 			state = State.WIN;
+			StartCoroutine("HandleWin");
 			GetComponent<BoxCollider2D>().enabled = false;
 		}
 	}
@@ -141,5 +180,47 @@ public class ShipController : MonoBehaviour {
 		Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
 		transform.rotation = Quaternion.Slerp(transform.rotation, q, (resetSpeed * .75f) * Time.deltaTime);
 		transform.position += resetSpeed * transform.up * Time.deltaTime;
+	}
+
+	IEnumerator HandleLoss()
+	{
+		yield return new WaitForSeconds(1);
+
+		PageManager.Instance.TurnOffPage(PageType.PLAY, PageType.LEVEL_LOSE);
+	}
+
+	IEnumerator HandleWin()
+	{
+		yield return new WaitForSeconds(1);
+
+		int status = ProgressManager.Instance.GetStatus(LevelLoader.Instance.targetInfo.galaxy, LevelLoader.Instance.targetInfo.level);
+		int currStars = 0;
+		switch (status)
+		{
+			case 2: currStars = 1; break;
+			case 3: currStars = 2; break;
+			case 4: currStars = 3; break;
+			default: currStars = 0; break;
+		}
+
+		int sessionStars = lives >= 3 ? 3 : lives;
+
+		if (sessionStars > currStars) {
+			ProgressManager.Instance.SetProgress(LevelLoader.Instance.targetInfo.galaxy, LevelLoader.Instance.targetInfo.level, sessionStars + 1);
+		}
+
+		PageManager.Instance.TurnOffPage(PageType.PLAY, PageType.LEVEL_WIN);
+		StartCoroutine("WaitToConfigureWinScreen", sessionStars);
+	}
+
+	IEnumerator WaitToConfigureWinScreen(int sessionStars)
+	{
+		while (PageManager.Instance.PageIsExiting(PageType.PLAY))
+		{
+			yield return null;
+		}
+
+		LevelWinPage winPage = GameObject.FindObjectOfType<LevelWinPage>();
+		winPage.ConfigurePage(LevelLoader.Instance.targetInfo.galaxy, LevelLoader.Instance.targetInfo.level, sessionStars);
 	}
 }

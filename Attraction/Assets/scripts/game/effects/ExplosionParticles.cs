@@ -37,10 +37,5 @@ public class ExplosionParticles : SimpleParticleSystem {
 	void Update()
 	{
 		UpdateParticles();
-		if (Input.GetKeyDown(KeyCode.Mouse0))
-		{
-			//SpawnParticles();
-			Lightning.Instance.Flash();
-		}
 	}
 }

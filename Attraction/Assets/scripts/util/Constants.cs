@@ -11,7 +11,7 @@ namespace Util {
 		public const string SCENE_SPLASH = "splash";
 		public const string SCENE_MENU = "menu";
 		public const string SCENE_LEVELS = "levels";
-		public const string SCENE_PLAY = "test";
+		public const string SCENE_PLAY = "play";
 
 		// ------------------DATA------------------
 		

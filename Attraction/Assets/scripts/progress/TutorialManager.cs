@@ -63,6 +63,7 @@ public class TutorialManager : MonoBehaviour {
 		switch (tutorial)
 		{
 			case TutorialType.GALAXIES: PageManager.Instance.LoadPage(PageType.TUTORIALS_GALAXIES); break;
+			case TutorialType.HOW_TO_PLAY: PageManager.Instance.LoadPage(PageType.TUTORIALS_HOW_TO_PLAY); break;
 		}
 	}
 
