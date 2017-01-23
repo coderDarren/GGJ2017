@@ -71,7 +71,7 @@ public class ShipController : MonoBehaviour {
 			case State.WIN: OrbitPlanet(); break;
         }
 
-        if (state != State.WAIT && state != State.RESET) {
+        if (state != State.WAIT && state != State.RESET && lives > 0) {
 
 	        if (Input.GetKey(KeyCode.Mouse0)) {
 	        	if (state != State.THRUST) {
@@ -130,8 +130,8 @@ public class ShipController : MonoBehaviour {
 
 	public void ReduceLives()
 	{
+		lives --;
 		if (lives >= 1) {
-			lives --;
 			OnLivesChanged(lives);
 			ReturnToBeginning();
 		}

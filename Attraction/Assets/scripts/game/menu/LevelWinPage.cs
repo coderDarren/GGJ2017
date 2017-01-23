@@ -19,10 +19,20 @@ public class LevelWinPage : MonoBehaviour {
 		totalStars = stars;
 		StartCoroutine("WaitToFill");
 
-		int status = ProgressManager.Instance.GetStatus(galaxy, level + 1);
-		if (status == -1) //the level is locked
+		if (level < 5)
 		{
-			ProgressManager.Instance.SetProgress(galaxy, level + 1, 0);
+			int status = ProgressManager.Instance.GetStatus(galaxy, level + 1);
+			if (status == -1) //the level is locked
+			{
+				ProgressManager.Instance.SetProgress(galaxy, level + 1, 0); //unlock it
+			}
+		}
+		else
+		{
+			GalaxyType nextGalaxy = (GalaxyType)((int)galaxy + 1);
+			int status = ProgressManager.Instance.GetStatus(nextGalaxy, 0);
+			if (status == -1) //galaxy is locked
+				ProgressManager.Instance.SetProgress(nextGalaxy, 0, 0); //unlock it
 		}
 	}
 
