@@ -62,6 +62,10 @@ public class ShipController : MonoBehaviour {
 	}
 
     void Update () {        
+
+    	if (lives == 0)
+    		return;
+
         switch (state) {
 			case State.WAIT: Wait(); break;
         	case State.ACCEL: Accelerate(); break;
@@ -97,9 +101,9 @@ public class ShipController : MonoBehaviour {
 
     void Accelerate()
     {
-    	thrust -= thrustAccel;
+    	thrust -= thrustAccel * Time.deltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
-    	vel += accel;
+    	vel += accel * Time.deltaTime * 75;
     	vel = Mathf.Clamp(vel, 0, power + thrust);
     	vel *= dying ? 0 : 1;
     	transform.position += vel * transform.up * Time.deltaTime;
@@ -110,9 +114,9 @@ public class ShipController : MonoBehaviour {
 
     void Deccelerate()
     {
-    	thrust -= thrustAccel;
+    	thrust -= thrustAccel * Time.deltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
-    	vel -= accel;
+    	vel -= accel * Time.deltaTime * 75;
     	vel = Mathf.Clamp(vel, coast, power + thrust);
     	vel *= dying ? 0 : 1;
     	transform.position += vel * transform.up * Time.deltaTime;
@@ -120,9 +124,9 @@ public class ShipController : MonoBehaviour {
 
     void Thrust()
     {
-    	thrust += thrustAccel;
+    	thrust += thrustAccel * Time.deltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
-    	vel += thrust;
+    	vel += thrust * Time.deltaTime * 75;
     	vel = Mathf.Clamp(vel, 0, power + thrust);
     	vel *= dying ? 0 : 1;
     	transform.position += vel * transform.up * Time.deltaTime;
