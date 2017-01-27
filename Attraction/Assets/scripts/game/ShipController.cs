@@ -61,7 +61,7 @@ public class ShipController : MonoBehaviour {
 		state = State.ACCEL;
 	}
 
-    void Update () {        
+    void FixedUpdate () {        
 
     	if (lives == 0)
     		return;
@@ -101,12 +101,12 @@ public class ShipController : MonoBehaviour {
 
     void Accelerate()
     {
-    	thrust -= thrustAccel * Time.deltaTime * 75;
+    	thrust -= thrustAccel * Time.fixedDeltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
-    	vel += accel * Time.deltaTime * 75;
+    	vel += accel * Time.fixedDeltaTime * 75;
     	vel = Mathf.Clamp(vel, 0, power + thrust);
     	vel *= dying ? 0 : 1;
-    	transform.position += vel * transform.up * Time.deltaTime;
+    	transform.position += vel * transform.up * Time.fixedDeltaTime;
 
     	if (vel >= power)
     		state = State.DECCEL;
@@ -114,22 +114,22 @@ public class ShipController : MonoBehaviour {
 
     void Deccelerate()
     {
-    	thrust -= thrustAccel * Time.deltaTime * 75;
+    	thrust -= thrustAccel * Time.fixedDeltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
-    	vel -= accel * Time.deltaTime * 75;
+    	vel -= accel * Time.fixedDeltaTime * 75;
     	vel = Mathf.Clamp(vel, coast, power + thrust);
     	vel *= dying ? 0 : 1;
-    	transform.position += vel * transform.up * Time.deltaTime;
+    	transform.position += vel * transform.up * Time.fixedDeltaTime;
     }
 
     void Thrust()
     {
-    	thrust += thrustAccel * Time.deltaTime * 75;
+    	thrust += thrustAccel * Time.fixedDeltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
-    	vel += thrust * Time.deltaTime * 75;
+    	vel += thrust * Time.fixedDeltaTime * 75;
     	vel = Mathf.Clamp(vel, 0, power + thrust);
     	vel *= dying ? 0 : 1;
-    	transform.position += vel * transform.up * Time.deltaTime;
+    	transform.position += vel * transform.up * Time.fixedDeltaTime;
     }
 
 	public void ReduceLives()
@@ -159,7 +159,7 @@ public class ShipController : MonoBehaviour {
 	{
 		float totalDist = Vector3.Distance(resetPos.position, startPos.position);
 		float currDist = Vector3.Distance(transform.position, startPos.position);
-		transform.position = Vector3.Lerp(transform.position, startPos.position, (totalDist - currDist + 0.01f) * resetSpeed * Time.deltaTime);
+		transform.position = Vector3.Lerp(transform.position, startPos.position, (totalDist - currDist + 0.01f) * resetSpeed * Time.fixedDeltaTime);
 		if (Vector3.Distance(transform.position, startPos.position) < 0.015f){
 			vel = 0;
 			thrust = 0;
@@ -184,16 +184,11 @@ public class ShipController : MonoBehaviour {
 
 	void OrbitPlanet()
 	{
-//		Vector3 relativePos = (planet.position + new Vector3(0,1.5f,0)) - transform.position;
-//		Quaternion rotation = Quaternion.LookRotation(relativePos);
-//		Quaternion current = transform.localRotation;
-//		transform.localRotation = Quaternion.Slerp(current, rotation, Time.deltaTime);
-//		transform.Translate(0,0,1*Time.deltaTime);
 		Vector3 vectorToTarget = planet.position - transform.position;
 		float angle = (Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg) - 90;
 		Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
-		transform.rotation = Quaternion.Slerp(transform.rotation, q, (resetSpeed * .75f) * Time.deltaTime);
-		transform.position += resetSpeed * transform.up * Time.deltaTime;
+		transform.rotation = Quaternion.Slerp(transform.rotation, q, (resetSpeed * .75f) * Time.fixedDeltaTime);
+		transform.position += resetSpeed * transform.up * Time.fixedDeltaTime;
 	}
 
 	IEnumerator HandleLoss()
