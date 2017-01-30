@@ -58,7 +58,7 @@ public class EnvironmentColorModule : MonoBehaviour {
 		var c = clouds.colorOverLifetime;
 		Gradient currGradient = c.color.gradient;
 		float timer = 0;
-		while (timer < 12) {
+		while (timer < 50) {
 			clouds.startColor = Color.Lerp(clouds.startColor, currentColor.particlesStartColor, cloudStartColorFadeSpeed * Time.deltaTime);
 			currGradient = Utility.LerpGradient(currGradient, targetParticlesGradient, cloudGradientFadeSpeed * Time.deltaTime);
 			c.color = currGradient;
@@ -66,8 +66,8 @@ public class EnvironmentColorModule : MonoBehaviour {
 			yield return null;
 		}
 
-		clouds.startColor = currentColor.particlesStartColor;
-		c.color = targetParticlesGradient;
+		//clouds.startColor = currentColor.particlesStartColor;
+		//c.color = targetParticlesGradient;
 	}
 
 	IEnumerator FadeBackground()

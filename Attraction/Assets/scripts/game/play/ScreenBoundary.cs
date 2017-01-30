@@ -17,11 +17,11 @@ public class ScreenBoundary : MonoBehaviour {
 	void OnTriggerExit2D(Collider2D col)
 	{
 		if (col.gameObject.tag.Equals("Player")) {
-			if (ship.dying || ship.state == ShipController.State.RESET)
+			if (ship.state == ShipController.State.DYING || ship.state == ShipController.State.RESET)
 				return;
 			explosion.gameObject.transform.position = col.gameObject.transform.position;
 			explosion.SpawnParticles();
-			playerRef.GetComponent<ShipController>().ReduceLives();
+			ship.ReduceLives();
 		}
 	}
 }

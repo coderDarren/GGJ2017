@@ -96,39 +96,39 @@ public class LevelSceneController : MonoBehaviour {
 		{
 			case GalaxyType.GALAXY_VIEW: 
 				StartCoroutine("ZoomToGalaxy", galaxyViewPoint); 
-				environment.SetEnvironmentColor(GalaxyColor.BLUE);
+				//environment.SetEnvironmentColor(GalaxyColor.BLUE);
 				break;
 			case GalaxyType.HOME_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", homeGalaxy); 
-				environment.SetEnvironmentColor(GalaxyColor.BLUE);
+				//environment.SetEnvironmentColor(GalaxyColor.BLUE);
 				break;
 			case GalaxyType.DAHKRI_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", dahkriGalaxy); 
-				environment.SetEnvironmentColor(GalaxyColor.PINK);
+				//environment.SetEnvironmentColor(GalaxyColor.PINK);
 				break;
 			case GalaxyType.KYDOR_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", kydorGalaxy); 
-				environment.SetEnvironmentColor(GalaxyColor.PURPLE);
+				//environment.SetEnvironmentColor(GalaxyColor.PURPLE);
 				break;
 			case GalaxyType.ZAX_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", zaxGalaxy); 
-				environment.SetEnvironmentColor(GalaxyColor.RED);
+				//environment.SetEnvironmentColor(GalaxyColor.RED);
 				break;
 			case GalaxyType.MALIX_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", malixGalaxy); 
-				environment.SetEnvironmentColor(GalaxyColor.BLACK);
+				//environment.SetEnvironmentColor(GalaxyColor.BLACK);
 				break;
 			case GalaxyType.XILYANTIPHOR_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", xilyantiphorGalaxy); 
-				environment.SetEnvironmentColor(GalaxyColor.RED);
+				//environment.SetEnvironmentColor(GalaxyColor.RED);
 				break;
 			case GalaxyType.VIDON_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", vidonGalaxy); 
-				environment.SetEnvironmentColor(GalaxyColor.PINK);
+				//environment.SetEnvironmentColor(GalaxyColor.PINK);
 				break;
 			case GalaxyType.RYKTAR_GALAXY: 
 				StartCoroutine("ZoomToGalaxy", ryktarGalaxy); 
-				environment.SetEnvironmentColor(GalaxyColor.GREEN);
+				//environment.SetEnvironmentColor(GalaxyColor.GREEN);
 				break;
 		}
 

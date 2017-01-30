@@ -9,12 +9,15 @@ public class ShipController : MonoBehaviour {
 	public static event LifeDelegate OnLivesChanged;
 	public delegate void CountdownDelegate(int time);
 	public static event CountdownDelegate OnCountdown;
+	public delegate void ThrusterDelegate();
+	public static event ThrusterDelegate OnThrustersEngage;
+	public static event ThrusterDelegate OnThrustersDisengage;
 
-	public float power = 2;    //max speed before deccel, TBD by player
-	public float thrustPower = 1;
+	public float thrustPower = 2;
 	public float thrustAccel = 0.02f;
     public float accel = 0.01f;
     public float coast = 1;
+    public ExplosionParticles explosion;
 
 	int lives = 5;
 	float startTime;
@@ -23,16 +26,13 @@ public class ShipController : MonoBehaviour {
 	public Transform startPos;
 	public Transform resetPos;
 	Transform planet;
-	public float resetSpeed = 2f;
 	Quaternion initialRot;
 
-	public enum State {ACCEL, DECCEL, THRUST, RESET, WIN, WAIT, }
+	public enum State {ACCEL, DECCEL, THRUST, RESET, WIN, WAIT, DYING}
     public State state;
-    State prevState;
 
     float vel;
     float thrust;
-    public bool dying;
 
     void Start() 
 	{
@@ -73,18 +73,20 @@ public class ShipController : MonoBehaviour {
         	case State.THRUST: Thrust(); break;
 			case State.RESET: MoveToStart(); break;	
 			case State.WIN: OrbitPlanet(); break;
+			case State.DYING: Die(); break;
         }
 
-        if (state != State.WAIT && state != State.RESET && lives > 0) {
+        if ((state == State.ACCEL || state == State.DECCEL || state == State.THRUST) && lives > 0) {
 
 	        if (Input.GetKey(KeyCode.Mouse0)) {
 	        	if (state != State.THRUST) {
-	        		prevState = state;
 	        		state = State.THRUST;
+	        		OnThrustersEngage();
 	        	}
-	        } else if (Input.GetKeyUp(KeyCode.Mouse0)) {
+	        } else {
 	        	if (state == State.THRUST) {
-	        		state = prevState;
+	        		state = State.DECCEL;
+	        		OnThrustersDisengage();
 	        	}
 	        }
 			if (Input.GetKeyDown(KeyCode.Space)) {
@@ -99,16 +101,24 @@ public class ShipController : MonoBehaviour {
 		transform.position = startPos.position;
 	}
 
+	void Die() {
+		transform.localScale = Vector3.Lerp(transform.localScale, Vector3.one * 0.02f, 1.5f * Time.deltaTime);
+		if (transform.localScale.magnitude < 0.05f) {
+			explosion.gameObject.transform.position = transform.position;
+			explosion.SpawnParticles();
+			ReduceLives();
+		}
+	}
+
     void Accelerate()
     {
     	thrust -= thrustAccel * Time.fixedDeltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
     	vel += accel * Time.fixedDeltaTime * 75;
-    	vel = Mathf.Clamp(vel, 0, power + thrust);
-    	vel *= dying ? 0 : 1;
+    	vel = Mathf.Clamp(vel, 0, coast + thrustPower);
     	transform.position += vel * transform.up * Time.fixedDeltaTime;
 
-    	if (vel >= power)
+    	if (vel >= coast + thrust)
     		state = State.DECCEL;
     }
 
@@ -117,8 +127,7 @@ public class ShipController : MonoBehaviour {
     	thrust -= thrustAccel * Time.fixedDeltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
     	vel -= accel * Time.fixedDeltaTime * 75;
-    	vel = Mathf.Clamp(vel, coast, power + thrust);
-    	vel *= dying ? 0 : 1;
+    	vel = Mathf.Clamp(vel, coast, coast + thrustPower);
     	transform.position += vel * transform.up * Time.fixedDeltaTime;
     }
 
@@ -127,13 +136,13 @@ public class ShipController : MonoBehaviour {
     	thrust += thrustAccel * Time.fixedDeltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
     	vel += thrust * Time.fixedDeltaTime * 75;
-    	vel = Mathf.Clamp(vel, 0, power + thrust);
-    	vel *= dying ? 0 : 1;
+    	vel = Mathf.Clamp(vel, 0, coast + thrustPower);
     	transform.position += vel * transform.up * Time.fixedDeltaTime;
     }
 
 	public void ReduceLives()
 	{
+		OnThrustersDisengage();
 		lives --;
 		if (lives >= 1) {
 			OnLivesChanged(lives);
@@ -151,19 +160,17 @@ public class ShipController : MonoBehaviour {
 		transform.position = resetPos.position;
 		transform.rotation = resetPos.rotation;
 		transform.localScale = Vector3.one * 0.15f;
+		vel = 0;
+		thrust = 0;
 		state = State.RESET;
-		dying = false;
 	}
+
 
 	void MoveToStart()
 	{
-		float totalDist = Vector3.Distance(resetPos.position, startPos.position);
-		float currDist = Vector3.Distance(transform.position, startPos.position);
-		transform.position = Vector3.Lerp(transform.position, startPos.position, (totalDist - currDist + 0.01f) * resetSpeed * Time.fixedDeltaTime);
-		if (Vector3.Distance(transform.position, startPos.position) < 0.015f){
-			vel = 0;
-			thrust = 0;
-			state = State.ACCEL;
+		Deccelerate();
+		if (Vector3.Distance(transform.position, startPos.position) < 0.03f){
+			state = State.DECCEL;
 		}
 	}
 
@@ -187,8 +194,8 @@ public class ShipController : MonoBehaviour {
 		Vector3 vectorToTarget = planet.position - transform.position;
 		float angle = (Mathf.Atan2(vectorToTarget.y, vectorToTarget.x) * Mathf.Rad2Deg) - 90;
 		Quaternion q = Quaternion.AngleAxis(angle, Vector3.forward);
-		transform.rotation = Quaternion.Slerp(transform.rotation, q, (resetSpeed * .75f) * Time.fixedDeltaTime);
-		transform.position += resetSpeed * transform.up * Time.fixedDeltaTime;
+		transform.rotation = Quaternion.Slerp(transform.rotation, q, (2 * .75f) * Time.fixedDeltaTime);
+		transform.position += 2 * transform.up * Time.fixedDeltaTime;
 	}
 
 	IEnumerator HandleLoss()

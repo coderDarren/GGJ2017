@@ -12,6 +12,8 @@ public class Lightning : MonoBehaviour {
 
 	BloomOptimized bloom;
 
+	public bool Active { get; private set; }
+
 	void Start()
 	{
 		Instance = this;
@@ -27,6 +29,8 @@ public class Lightning : MonoBehaviour {
 
 	IEnumerator FlashIntensity()
 	{
+		Active = true;
+
 		while (Mathf.Abs(bloom.intensity - flashIntensity) > 0.01f) {
 			bloom.intensity = Mathf.Lerp(bloom.intensity, flashIntensity, flashSpeed * Time.deltaTime);
 			yield return null;
@@ -43,6 +47,7 @@ public class Lightning : MonoBehaviour {
 			yield return null;
 		}
 
+		Active = false;
 		bloom.intensity = 0;
 	}
 }

@@ -27,14 +27,13 @@ public class GravityWell : MonoBehaviour {
 	int influence;
 	int wellsInfluencingPlayer;
 	bool containsPlayer;
-	bool destroyPlayer;
 
 	void Start()
 	{
 		player = GameObject.FindGameObjectWithTag("Player").GetComponent<Transform>();
 		shipController = player.GetComponent<ShipController>();
 		influence = gravityType == GravityType.NORMAL ? 1 : -1;
-		playerScale = 0.2f;
+		playerScale = 0.15f;
 	}
 
 	void OnEnable()
@@ -51,16 +50,15 @@ public class GravityWell : MonoBehaviour {
 
 	void OnPlayerEntered(GravityWell well)
 	{
-		if (this == well)
+		if (this == well){
 			containsPlayer = true;
+		}
 		wellsInfluencingPlayer++;
 	}
 
 	void OnPlayerLeft(GravityWell well)
 	{
 		if (this == well){
-			destroyPlayer = false;
-			playerDied = false;
 			containsPlayer = false;
 		}
 		wellsInfluencingPlayer--;
@@ -70,21 +68,23 @@ public class GravityWell : MonoBehaviour {
 	{
 		distance = Vector3.Distance(player.position, transform.position);
 
-		if (distance < radius / 6) {
-			shipController.dying = true;
-			destroyPlayer = true;
-		}
-
-		if (distance < radius){
-			if (!containsPlayer)
-				PlayerEntered(this);
-			magnitude = (radius - distance) * 2;
-
-		}
-		else{
-			if (containsPlayer)
+		if (shipController.state != ShipController.State.DYING) {
+			if (distance < radius / 6) {
+				shipController.state = ShipController.State.DYING;
 				PlayerLeft(this);
-			magnitude = 0;
+			}
+
+			if (distance < radius){
+				if (!containsPlayer)
+					PlayerEntered(this);
+				magnitude = (radius - distance) * 2;
+
+			}
+			else{
+				if (containsPlayer)
+					PlayerLeft(this);
+				magnitude = 0;
+			}
 		}
 
 		relativeDirection = transform.position - player.position;
@@ -92,12 +92,11 @@ public class GravityWell : MonoBehaviour {
      	Quaternion target = Quaternion.Euler(0f, 0f, angleToPlayer - 90 * influence);
      	player.rotation = Quaternion.Lerp(player.rotation, target, magnitude * force * Time.deltaTime);
 
-     	if (containsPlayer || wellsInfluencingPlayer == 0 && !playerDied) {
+     	if (containsPlayer || wellsInfluencingPlayer == 0 && shipController.state != ShipController.State.DYING) {
      		HandlePlayerScale();
      	}
 	}
 
-	bool playerDied;
 	void HandlePlayerScale()
 	{
 		if (distance < radius){
@@ -106,17 +105,7 @@ public class GravityWell : MonoBehaviour {
 		else{
 			playerScale = 0.15f;
 		}
-		if (destroyPlayer)
-			playerScale = 0.01f;
 		
-		if (player.localScale.x <= 0.035f) {
-			GameObject.FindObjectOfType<ExplosionParticles>().transform.position = player.position;
-			GameObject.FindObjectOfType<ExplosionParticles>().SpawnParticles();
-			shipController.ReduceLives();
-			OnPlayerLeft(this);
-			playerDied = true;
-		} else {
-			player.localScale = Vector3.Lerp(player.localScale, Vector3.one * playerScale, 1.5f * Time.deltaTime);
-		}
+		player.localScale = Vector3.Lerp(player.localScale, Vector3.one * playerScale, 1.5f * Time.deltaTime);
 	}
 }
