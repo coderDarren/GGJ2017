@@ -40,9 +40,12 @@ public class ShipController : MonoBehaviour {
 		initialRot = this.transform.rotation;
 		startTime = Time.time;
 		state = State.WAIT;
-		StartCoroutine("WaitToLaunch");
 	}
 
+	/// <summary>
+	/// Entry to gameplay
+	/// Triggered by EnviroFader when the scene has finished fading in.
+	/// </summary>
 	IEnumerator WaitToLaunch()
 	{
 		TutorialManager.Instance.StartTutorial(TutorialType.HOW_TO_PLAY);
@@ -52,7 +55,7 @@ public class ShipController : MonoBehaviour {
 			yield return null;
 		}
 
-		int countdown = 5;
+		int countdown = 3;
 		while (countdown >= 0) {
 			OnCountdown(countdown);
 			countdown--;

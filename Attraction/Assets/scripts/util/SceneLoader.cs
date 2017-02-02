@@ -21,6 +21,8 @@ namespace Util {
 		float  _transitionAlpha;
 		string _targetScene;
 		AudioManager audio;
+		bool instant;
+		SpriteRenderer enviroFader;
 
 		public GameScene gameScene { get; private set; }
 
@@ -76,7 +78,8 @@ namespace Util {
 			if (gameScene == GameScene.PLAY) {
 				LevelLoader.Instance.LoadLevelInfo();
 			}
-			StartCoroutine("FadeSceneIn");
+			if (!instant)
+				StartCoroutine("FadeSceneIn");
 		}
 
 		/// ----------------------- PUBLIC FUNCTIONS -----------------------
@@ -86,6 +89,7 @@ namespace Util {
 		/// </summary>
 		public void LoadScene(GameScene _gameScene)
 		{
+			instant = false;
 			_targetScene = Utility.SceneToString(_gameScene);
 
 			if (SceneManager.GetActiveScene().name == "splash")
@@ -102,6 +106,31 @@ namespace Util {
 			gameScene = _gameScene;
 
 			StartCoroutine("FadeSceneOut");
+		}
+
+		public void LoadPlaySceneInstant() 
+		{
+			instant = true;
+			_targetScene = Utility.SceneToString(GameScene.PLAY);
+			gameScene = GameScene.PLAY;
+			StartCoroutine("FadeLevel");
+		}
+
+		IEnumerator FadeLevel() {
+			enviroFader = GameObject.FindGameObjectWithTag("EnvironmentFader").GetComponent<SpriteRenderer>();
+			float target = 1;
+			Color curr = enviroFader.color;
+
+			while (curr.a < 0.99f) {
+				curr.a = Mathf.Lerp(curr.a, target, 2 * Time.deltaTime);
+				enviroFader.color = curr;
+				yield return null;
+			}
+
+			curr.a = target;
+			enviroFader.color = curr;
+
+			SceneManager.LoadScene(_targetScene);
 		}
 	}
 
