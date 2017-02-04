@@ -25,6 +25,7 @@ public class LevelSceneController : MonoBehaviour {
 	public GalaxyZone ryktarGalaxy;
 	public float zoomSpeed;
 
+	LevelLoader levelLoader;
 	ApplicationLoader appLoader;
 	PageManager pageManager;
 	GalaxyZone activeZone;
@@ -33,6 +34,7 @@ public class LevelSceneController : MonoBehaviour {
 
 	void Start()
 	{
+		levelLoader = LevelLoader.Instance;
 		appLoader = ApplicationLoader.Instance;
 		pageManager = PageManager.Instance;
 		environment = EnvironmentColorModule.Instance;
@@ -44,7 +46,10 @@ public class LevelSceneController : MonoBehaviour {
 		while (appLoader.sceneIsFadedOut) //while the loading screen is still fading out
 			yield return null;
 
-		ViewGalaxy(GalaxyType.GALAXY_VIEW);
+		if (levelLoader.targetGalaxy == GalaxyType.NONE)
+			ViewGalaxy(GalaxyType.GALAXY_VIEW);
+		else
+			ViewGalaxy(levelLoader.targetInfo.galaxy);
 	}
 
 	IEnumerator ZoomToGalaxy(GalaxyZone galaxy)
@@ -57,12 +62,17 @@ public class LevelSceneController : MonoBehaviour {
 		}
 
 		Transform t = galaxy.camTarget;
-		float distance = Vector3.Distance(cam.position, t.position);
-		float totalDistance = distance;
-		while (distance > 0.1f)
+		Vector3 startPos = cam.position;
+		float distanceToTarget = Vector3.Distance(cam.position, t.position);
+		float distanceToStart = Vector3.Distance(cam.position, startPos);
+		float totalDistance = distanceToTarget;
+		Vector3 vel = Vector3.zero;
+
+		while (distanceToTarget > 0.1f)
 		{
-			cam.position = Vector3.Lerp(cam.position, t.position, ((totalDistance - distance)*0.1f + zoomSpeed) * Time.deltaTime);
-			distance = Vector3.Distance(cam.position, t.position);
+			cam.position = Vector3.SmoothDamp(cam.position, t.position, ref vel, zoomSpeed * Time.deltaTime);
+			distanceToTarget = Vector3.Distance(cam.position, t.position);
+			distanceToStart = Vector3.Distance(cam.position, startPos);
 			yield return null;
 		}
 

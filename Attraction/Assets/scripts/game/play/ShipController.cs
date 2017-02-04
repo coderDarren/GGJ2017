@@ -187,6 +187,7 @@ public class ShipController : MonoBehaviour {
 		if(col.gameObject.tag.Equals("Planet")) {			
 			planet = col.gameObject.transform;
 			state = State.WIN;
+			OnThrustersDisengage();
 			StartCoroutine("HandleWin");
 			GetComponent<BoxCollider2D>().enabled = false;
 		}

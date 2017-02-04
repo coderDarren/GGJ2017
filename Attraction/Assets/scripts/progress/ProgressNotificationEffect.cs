@@ -16,14 +16,27 @@ public class ProgressNotificationEffect : MonoBehaviour {
 
 	public GalaxyType galaxy;
 	public int level;
+	public bool checkProgress = true;
 	int galaxyStatus;
+	bool on = true;
+
+	public bool On 
+	{
+		get { return on; }
+		set { on = value; }
+	}
 
 	void OnEnable()
 	{
-		galaxyStatus = ProgressManager.Instance.GetStatus(galaxy, level);
-		if ((level == 0 && galaxyStatus == 0) ||
-			(level > 0 && galaxyStatus == 0))
+		if (checkProgress) {
+			galaxyStatus = ProgressManager.Instance.GetStatus(galaxy, level);
+			if ((level == 0 && galaxyStatus == 0) ||
+				(level > 0 && galaxyStatus == 0))
+				StartCoroutine("RunRippleEffect");
+		}
+		else {
 			StartCoroutine("RunRippleEffect");
+		}
 	}
 
 	void OnDisable()
@@ -35,9 +48,13 @@ public class ProgressNotificationEffect : MonoBehaviour {
 	{
 		while (true)
 		{
-			StopCoroutine("Ripple");
-			StartCoroutine("Ripple");
-			yield return new WaitForSeconds(rippleFrequency);
+			if (on) {
+				StopCoroutine("Ripple");
+				StartCoroutine("Ripple");
+				yield return new WaitForSeconds(rippleFrequency);
+			} else {
+				yield return null;
+			}
 		}
 	}
 

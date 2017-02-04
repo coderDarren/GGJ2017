@@ -62,6 +62,7 @@ namespace Util {
 			ApplicationLoader.Instance.StartLoading();
 			while (!ApplicationLoader.Instance.sceneIsFadedOut)
 				yield return null;
+			yield return new WaitForSeconds(1);
 			SceneManager.LoadScene(_targetScene);
 		}
 
@@ -78,6 +79,9 @@ namespace Util {
 			if (gameScene == GameScene.PLAY) {
 				LevelLoader.Instance.LoadLevelInfo();
 			}
+			if (gameScene == GameScene.MENU) {
+				LevelLoader.Instance.ResetTargetGalaxy();
+			}
 			if (!instant)
 				StartCoroutine("FadeSceneIn");
 		}
@@ -92,10 +96,7 @@ namespace Util {
 			instant = false;
 			_targetScene = Utility.SceneToString(_gameScene);
 
-			if (SceneManager.GetActiveScene().name == "splash")
-				ApplicationLoader.Instance.fadeTransitionSmooth = 0.5f;
-			else
-				ApplicationLoader.Instance.fadeTransitionSmooth = 2.5f;
+			ApplicationLoader.Instance.fadeTransitionSmooth = 2.5f;
 
 			if (_targetScene.Equals("NULL"))
 			{

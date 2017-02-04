@@ -14,8 +14,8 @@ public class LevelLoader : MonoBehaviour {
 	public static LevelLoader Instance;
 	public LeveLInfo[] levelInfo;
 
-	GalaxyType galaxy;
 	public LeveLInfo targetInfo { get; private set; }
+	public GalaxyType targetGalaxy { get; private set; }
 	int level;
 
 	void Awake()
@@ -36,9 +36,14 @@ public class LevelLoader : MonoBehaviour {
 		{
 			if (levelInfo[i].galaxy == galaxy && levelInfo[i].level == level) {
 				targetInfo = levelInfo[i];
+				targetGalaxy = targetInfo.galaxy;
 				return;
 			}
 		}
+	}
+
+	public void ResetTargetGalaxy() {
+		targetGalaxy = GalaxyType.NONE;
 	}
 
 	public void LoadLevelInfo()

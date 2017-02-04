@@ -10,7 +10,8 @@ namespace Util {
 
 		public static ApplicationLoader Instance;
 
-		public LoadingGears loadingGears;
+		public ProgressNotificationEffect loadingEffect1;
+		public ProgressNotificationEffect loadingEffect2;
 
 		public bool loading { get; private set; }
 		public bool sceneIsFadedOut { get; private set; }
@@ -28,6 +29,8 @@ namespace Util {
 				_canvas = GetComponent<Canvas>();
 				_canvasGroup = GetComponent<CanvasGroup>();
 				_canvasGroup.alpha = _transitionAlpha;
+				loadingEffect1.On = false;
+				loadingEffect2.On = false;
 			}
 		}
 
@@ -50,7 +53,6 @@ namespace Util {
 			//force load screen to be on top of all other screens
 			_canvas.sortingOrder = 1001;
 			_transitionAlpha = 0;
-			loadingGears.StartLoading();
 
 			while (_transitionAlpha < 0.98f)
 			{
@@ -60,10 +62,16 @@ namespace Util {
 			}
 			_canvasGroup.alpha = 1;
 			sceneIsFadedOut = true;
+
+			loadingEffect1.On = true;
+			loadingEffect2.On = true;
 		}
 
 		IEnumerator FadeSceneIn()
 		{
+			loadingEffect1.On = false;
+			loadingEffect2.On = false;
+
 			yield return new WaitForSeconds(1);
 			_transitionAlpha = 1;
 			while (_transitionAlpha > 0.02f)
@@ -76,7 +84,6 @@ namespace Util {
 			}
 			_canvasGroup.alpha = 0;
 			sceneIsFadedOut = false;
-			loadingGears.StopLoading();
 			//force load screen to be under of all other screens (only after it is fully transparent)
 			_canvas.sortingOrder = -10;
 		}
