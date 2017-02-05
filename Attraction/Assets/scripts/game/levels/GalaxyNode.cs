@@ -32,6 +32,7 @@ public class GalaxyNode : MonoBehaviour {
 				icon.sprite = padLockIcon;
 				circle.color = disabledColor;
 				title.text = "undiscovered";
+				title.color = disabledColor;
 				button.enabled = false;
 				break;
 			case 0: //if the galaxy is new and unopened
