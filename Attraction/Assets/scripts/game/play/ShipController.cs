@@ -33,10 +33,12 @@ public class ShipController : MonoBehaviour {
 	Transform planet;
 	Quaternion initialRot;
 
-	public enum State {ACCEL, DECCEL, THRUST, RESET, WIN, WAIT, DYING}
+	public enum State {ACCEL, DECCEL, THRUST, STATIC, RESET, WIN, WAIT, DYING}
     public State state;
 
-    float vel;
+    public float vel = .5f;
+    public float maxVel = 2f;
+    public float minVel = .5f;
     float thrust;
 
     void Start() 
@@ -84,42 +86,52 @@ public class ShipController : MonoBehaviour {
         	case State.ACCEL: Accelerate(); break;
         	case State.DECCEL: Deccelerate(); break;
         	case State.THRUST: Thrust(); break;
+        	case State.STATIC: Static(); break;
 			case State.RESET: MoveToStart(); break;	
 			case State.WIN: OrbitPlanet(); break;
 			case State.DYING: Die(); break;
         }
 
-        if ((state == State.ACCEL || state == State.DECCEL || state == State.THRUST) && lives > 0) {
+        if ((state == State.ACCEL || state == State.DECCEL || state == State.THRUST || state == State.STATIC) && lives > 0) {
+
+        	if (!bpa.buttonPressed) {
+        		if(state != State.STATIC) {
+        			state = State.STATIC;
+        		}
+        	}
+
+        	if (!bpd.buttonPressed) {
+        		if (state != State.STATIC) {
+        			state = State.STATIC;
+        		}
+        	}
 
         	if (bpa.buttonPressed) {
-        		if (state != State.THRUST) {
+        		if (state == State.STATIC) {
 	        		state = State.THRUST;
 	        		OnThrustersEngage();
 	        	}
         	}
 
         	if (bpd.buttonPressed) {
-        		if (state == State.THRUST) {
+        		if (state == State.STATIC) {
 	        		state = State.DECCEL;
 	        		OnThrustersDisengage();
 	        	}
         	}
 
-	        // if (Input.GetKey(KeyCode.Mouse0)) {
-	        // 	if (state != State.THRUST) {
-	        // 		state = State.THRUST;
-	        // 		OnThrustersEngage();
-	        // 	}
-	        // } else {
-	        // 	if (state == State.THRUST) {
-	        // 		state = State.DECCEL;
-	        // 		OnThrustersDisengage();
-	        // 	}
-	        // }
 			if (Input.GetKeyDown(KeyCode.Space)) {
 				this.transform.position = startPos.position;
 				this.transform.rotation = initialRot;
 			}
+    	}
+
+    	if (vel < minVel) {
+    		vel = minVel;
+    	}
+
+    	if (vel > maxVel) {
+    		vel = maxVel;
     	}
     }
 
@@ -164,6 +176,12 @@ public class ShipController : MonoBehaviour {
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
     	vel += thrust * Time.fixedDeltaTime * 75;
     	vel = Mathf.Clamp(vel, 0, coast + thrustPower);
+    	transform.position += vel * transform.up * Time.fixedDeltaTime;
+    }
+
+    void Static()
+    {
+    	vel = vel;
     	transform.position += vel * transform.up * Time.fixedDeltaTime;
     }
 
