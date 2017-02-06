@@ -13,6 +13,11 @@ public class ShipController : MonoBehaviour {
 	public static event ThrusterDelegate OnThrustersEngage;
 	public static event ThrusterDelegate OnThrustersDisengage;
 
+	public GameObject accelButton;
+	public GameObject decelButton;
+	public ButtonPressAccelerate bpa;
+	public ButtonPressDecelerate bpd;
+
 	public float thrustPower = 2;
 	public float thrustAccel = 0.02f;
     public float accel = 0.01f;
@@ -40,6 +45,11 @@ public class ShipController : MonoBehaviour {
 		initialRot = this.transform.rotation;
 		startTime = Time.time;
 		state = State.WAIT;
+
+		accelButton = GameObject.FindGameObjectWithTag("AccelButton");
+		decelButton = GameObject.FindGameObjectWithTag("DecelButton");
+		bpa = accelButton.GetComponent<ButtonPressAccelerate>();
+		bpd = decelButton.GetComponent<ButtonPressDecelerate>();
 	}
 
 	/// <summary>
@@ -81,17 +91,31 @@ public class ShipController : MonoBehaviour {
 
         if ((state == State.ACCEL || state == State.DECCEL || state == State.THRUST) && lives > 0) {
 
-	        if (Input.GetKey(KeyCode.Mouse0)) {
-	        	if (state != State.THRUST) {
+        	if (bpa.buttonPressed) {
+        		if (state != State.THRUST) {
 	        		state = State.THRUST;
 	        		OnThrustersEngage();
 	        	}
-	        } else {
-	        	if (state == State.THRUST) {
+        	}
+
+        	if (bpd.buttonPressed) {
+        		if (state == State.THRUST) {
 	        		state = State.DECCEL;
 	        		OnThrustersDisengage();
 	        	}
-	        }
+        	}
+
+	        // if (Input.GetKey(KeyCode.Mouse0)) {
+	        // 	if (state != State.THRUST) {
+	        // 		state = State.THRUST;
+	        // 		OnThrustersEngage();
+	        // 	}
+	        // } else {
+	        // 	if (state == State.THRUST) {
+	        // 		state = State.DECCEL;
+	        // 		OnThrustersDisengage();
+	        // 	}
+	        // }
 			if (Input.GetKeyDown(KeyCode.Space)) {
 				this.transform.position = startPos.position;
 				this.transform.rotation = initialRot;
