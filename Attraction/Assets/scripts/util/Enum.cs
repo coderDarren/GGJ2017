@@ -47,6 +47,17 @@ namespace Types {
 		ANTIGRAVITY_WELLS
 	}
 
+	public enum ShipType {
+		SHIP_01,
+		SHIP_02,
+		SHIP_03,
+		SHIP_04,
+		SHIP_05,
+		SHIP_06,
+		SHIP_07,
+		SHIP_08
+	}
+
 	public enum AudioState 
 	{
 		ON,
