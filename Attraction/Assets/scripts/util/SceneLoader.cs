@@ -45,7 +45,7 @@ namespace Util {
 		{
 			if (Instance == this) {
 				audio = AudioManager.Instance;
-				StartCoroutine("WaitToStart");
+				//StartCoroutine("WaitToStart");
 			}
 		}
 
