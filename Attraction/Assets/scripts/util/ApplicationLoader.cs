@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Types;
 
 namespace Util {
 
@@ -86,6 +87,7 @@ namespace Util {
 			sceneIsFadedOut = false;
 			//force load screen to be under of all other screens (only after it is fully transparent)
 			_canvas.sortingOrder = -10;
+
 		}
 	}
 }
