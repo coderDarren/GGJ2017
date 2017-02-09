@@ -91,31 +91,31 @@ public class ShipController : MonoBehaviour {
 
         if ((state == State.ACCEL || state == State.DECCEL || state == State.THRUST) && lives > 0) {
 
-        	if (bpa.buttonPressed) {
-        		if (state != State.THRUST) {
+        	//if (bpa.buttonPressed) {
+        	//	if (state != State.THRUST) {
+	        //		state = State.THRUST;
+	        //		OnThrustersEngage();
+	        //	}
+        	//}
+
+        	//if (bpd.buttonPressed) {
+        	//	if (state == State.THRUST) {
+	        //		state = State.DECCEL;
+	        //		OnThrustersDisengage();
+	        //	}
+        	//}
+
+	        if (Input.GetKey(KeyCode.Mouse0)) {
+	        	if (state != State.THRUST) {
 	        		state = State.THRUST;
 	        		OnThrustersEngage();
 	        	}
-        	}
-
-        	if (bpd.buttonPressed) {
-        		if (state == State.THRUST) {
+	        } else {
+	        	if (state == State.THRUST) {
 	        		state = State.DECCEL;
 	        		OnThrustersDisengage();
 	        	}
-        	}
-
-	        // if (Input.GetKey(KeyCode.Mouse0)) {
-	        // 	if (state != State.THRUST) {
-	        // 		state = State.THRUST;
-	        // 		OnThrustersEngage();
-	        // 	}
-	        // } else {
-	        // 	if (state == State.THRUST) {
-	        // 		state = State.DECCEL;
-	        // 		OnThrustersDisengage();
-	        // 	}
-	        // }
+	        }
 			if (Input.GetKeyDown(KeyCode.Space)) {
 				this.transform.position = startPos.position;
 				this.transform.rotation = initialRot;
@@ -237,27 +237,12 @@ public class ShipController : MonoBehaviour {
 	{
 		yield return new WaitForSeconds(1);
 
-		int status = ProgressManager.Instance.GetStatus(LevelLoader.Instance.targetInfo.galaxy, LevelLoader.Instance.targetInfo.level);
-		int currStars = 0;
-		switch (status)
-		{
-			case 2: currStars = 1; break;
-			case 3: currStars = 2; break;
-			case 4: currStars = 3; break;
-			default: currStars = 0; break;
-		}
-
-		int sessionStars = lives >= 3 ? 3 : lives;
-
-		if (sessionStars > currStars) {
-			ProgressManager.Instance.SetProgress(LevelLoader.Instance.targetInfo.galaxy, LevelLoader.Instance.targetInfo.level, sessionStars + 1);
-		}
 
 		PageManager.Instance.TurnOffPage(PageType.PLAY, PageType.LEVEL_WIN);
-		StartCoroutine("WaitToConfigureWinScreen", sessionStars);
+		StartCoroutine("WaitToConfigureWinScreen");
 	}
 
-	IEnumerator WaitToConfigureWinScreen(int sessionStars)
+	IEnumerator WaitToConfigureWinScreen()
 	{
 		while (PageManager.Instance.PageIsExiting(PageType.PLAY))
 		{
@@ -265,6 +250,6 @@ public class ShipController : MonoBehaviour {
 		}
 
 		LevelWinPage winPage = GameObject.FindObjectOfType<LevelWinPage>();
-		winPage.ConfigurePage(LevelLoader.Instance.targetInfo.galaxy, LevelLoader.Instance.targetInfo.level, sessionStars);
+		winPage.ConfigurePage(LevelLoader.Instance.targetInfo.galaxy, LevelLoader.Instance.targetInfo.level, lives);
 	}
 }
