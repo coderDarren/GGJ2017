@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine.SocialPlatforms;
 using Types;
 using Util;
+using Menu;
 
 #if UNITY_ANDROID
 	using GooglePlayGames;
@@ -17,14 +18,14 @@ public class SessionManager : MonoBehaviour {
 	public static event RefreshDelegate RefreshSocialUsability;
 
 	public string userName { get; private set; }
-	public string userId { get; private set; }
+	public string userId;
 	public bool validUser { 
 		get { return Social.localUser.authenticated; }
 	}
 
 	SceneLoader scene;
 
-	void Start() {
+	void Awake() {
 		if (Instance == null) {
 			scene = SceneLoader.Instance;
 
@@ -35,6 +36,7 @@ public class SessionManager : MonoBehaviour {
 #endif
 
 			Instance = this;
+
 		}
 	}
 
@@ -46,6 +48,7 @@ public class SessionManager : MonoBehaviour {
 	void ConfigureGooglePlay() {
 		PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().Build();
 		PlayGamesPlatform.InitializeInstance(config);
+		PlayGamesPlatform.DebugLogEnabled = true;
 		PlayGamesPlatform.Activate();
 		Social.localUser.Authenticate(ProcessAuthentication);
 	}
@@ -54,6 +57,10 @@ public class SessionManager : MonoBehaviour {
 		if (success) {
 			userName = Social.localUser.userName;
 			userId = Social.localUser.id;
+			GetComponent<ProgressManager>().CheckResetProgress();
+			GetComponent<TutorialManager>().CheckResetTutorials();
+		} else {
+			userId = string.Empty;
 		}
 		StartCoroutine("WaitToStart");
 	}
@@ -71,9 +78,18 @@ public class SessionManager : MonoBehaviour {
 	void Login() {
 		PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder().Build();
 		PlayGamesPlatform.InitializeInstance(config);
+		PlayGamesPlatform.DebugLogEnabled = true;
 		PlayGamesPlatform.Activate();
 		Social.localUser.Authenticate((bool success) => {
 			RefreshSocialUsability();
+			if (success) {
+				userName = Social.localUser.userName;
+				userId = Social.localUser.id;
+				GetComponent<ProgressManager>().CheckResetProgress();
+				GetComponent<TutorialManager>().CheckResetTutorials();
+			} else {
+				userId = string.Empty;
+			}
 		});
 	}
 
@@ -89,7 +105,7 @@ public class SessionManager : MonoBehaviour {
 	public void ShowAchievements() {
 
 #if UNITY_ANDROID
-		Social.ShowAchievementsUI();
+		PlayGamesPlatform.Instance.ShowAchievementsUI();
 #endif
 
 	}
@@ -97,8 +113,34 @@ public class SessionManager : MonoBehaviour {
 	public void ShowLeaderboard() {
 
 #if UNITY_ANDROID
-		Social.ShowLeaderboardUI();
+		PlayGamesPlatform.Instance.ShowLeaderboardUI(Remnant.GPGSIds.leaderboard_stars_earned);
 #endif
 
+	}
+
+	public void IncrementEvent(string eventId, uint amount) {
+		if (!validUser) 
+			return;
+
+		PlayGamesPlatform.Instance.Events.IncrementEvent(eventId, amount);
+	}
+
+	public void IncrementLevelAchievement(GalaxyType galaxy, int level, int amount) {
+		if (!validUser)
+			return;
+
+		string achievementId = GPGSUtil.GetGalaxyAchievementId(galaxy);
+		if (achievementId == string.Empty) {
+			return;
+		}
+
+		PlayGamesPlatform.Instance.IncrementAchievement(
+	 	   achievementId, amount, (bool success) => {
+	 	   	if (success) {
+	 	   		PageManager.Instance.LoadPage(PageType.ACHIEVEMENT_PROGRESS);
+	 	   		AchievementProgressPage page = GameObject.FindObjectOfType<AchievementProgressPage>();
+	 	   		page.Configure(level - 1, level, 5);
+	 	   	}
+	   	});
 	}
 }
