@@ -110,7 +110,7 @@ public class SimpleParticleSystem : MonoBehaviour {
 	public Color startColor;
 	public Color[] colors;
 
-	List<Particle> particles;
+	protected List<Particle> particles;
 	Pool pool;
 
 	protected void Init()

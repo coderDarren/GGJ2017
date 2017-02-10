@@ -20,7 +20,7 @@ namespace Util {
 		CanvasGroup _canvasGroup;
 		float  _transitionAlpha;
 		string _targetScene;
-		AudioManager audio;
+		AudioManager audioManager;
 		bool instant;
 		SpriteRenderer enviroFader;
 
@@ -44,7 +44,7 @@ namespace Util {
 		void Start()
 		{
 			if (Instance == this) {
-				audio = AudioManager.Instance;
+				audioManager = AudioManager.Instance;
 				//StartCoroutine("WaitToStart");
 			}
 		}
@@ -62,20 +62,20 @@ namespace Util {
 			ApplicationLoader.Instance.StartLoading();
 			while (!ApplicationLoader.Instance.sceneIsFadedOut)
 				yield return null;
-			yield return new WaitForSeconds(1);
+			yield return null;
 			SceneManager.LoadScene(_targetScene);
 		}
 
 		IEnumerator FadeSceneIn()
 		{
-			yield return new WaitForSeconds(1);
+			yield return null;
 			ApplicationLoader.Instance.StopLoading();
 		}
 
 		void OnLevelWasLoaded(int level)
 		{
 			Debugger.Log(SceneManager.GetActiveScene().name + " was loaded.", DebugFlag.EVENT);
-			audio.SetSceneBasedAudio(gameScene);
+			audioManager.SetSceneBasedAudio(gameScene);
 			if (gameScene == GameScene.PLAY) {
 				LevelLoader.Instance.LoadLevelInfo();
 			}

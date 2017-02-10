@@ -10,7 +10,6 @@ public class TutorialManager : MonoBehaviour {
 
 	const string INITIALIZED = "TUTORIALS_INITIALIZED";
 
-	SessionManager session;
 
 	void Awake()
 	{
@@ -24,19 +23,15 @@ public class TutorialManager : MonoBehaviour {
 		}
 	}
 
-	void Start()
-	{
-		session = SessionManager.Instance;
-	}
 
 	void InitializeTutorials()
 	{
 		Array tutorials = Enum.GetValues(typeof(TutorialType));
 		foreach (TutorialType tutorial in tutorials)
 		{
-			PlayerPrefs.SetInt(session.userId + tutorial.ToString(), 0);
+			PlayerPrefs.SetInt(SessionManager.Instance.userId + tutorial.ToString(), 0);
 		}
-		PlayerPrefs.SetInt(session.userId + INITIALIZED, 1);
+		PlayerPrefs.SetInt(SessionManager.Instance.userId + INITIALIZED, 1);
 	}
 
 	public void CheckResetTutorials()
@@ -55,12 +50,12 @@ public class TutorialManager : MonoBehaviour {
 
 	public int GetStatus(string pref)
 	{
-		return PlayerPrefs.GetInt(session.userId + pref);
+		return PlayerPrefs.GetInt(SessionManager.Instance.userId + pref);
 	}
 
 	public int GetStatus(TutorialType tutorial)
 	{
-		return PlayerPrefs.GetInt(session.userId + tutorial.ToString());
+		return PlayerPrefs.GetInt(SessionManager.Instance.userId + tutorial.ToString());
 	}
 
 	public void StartTutorial(TutorialType tutorial)
@@ -78,6 +73,6 @@ public class TutorialManager : MonoBehaviour {
 
 	public void CompleteTutorial(TutorialType tutorial)
 	{
-		PlayerPrefs.SetInt(session.userId + tutorial.ToString(), 1);
+		PlayerPrefs.SetInt(SessionManager.Instance.userId + tutorial.ToString(), 1);
 	}
 }

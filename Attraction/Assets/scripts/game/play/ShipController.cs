@@ -91,8 +91,6 @@ public class ShipController : MonoBehaviour {
 
         if ((state == State.ACCEL || state == State.DECCEL || state == State.THRUST) && lives > 0) {
 
-<<<<<<< HEAD
-=======
         	//if (bpa.buttonPressed) {
         	//	if (state != State.THRUST) {
 	        //		state = State.THRUST;
@@ -107,7 +105,6 @@ public class ShipController : MonoBehaviour {
 	        //	}
         	//}
 
->>>>>>> darrenBranch
 	        if (Input.GetKey(KeyCode.Mouse0)) {
 	        	if (state != State.THRUST) {
 	        		state = State.THRUST;

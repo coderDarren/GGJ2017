@@ -62,17 +62,13 @@ public class LevelSceneController : MonoBehaviour {
 		}
 
 		Transform t = galaxy.camTarget;
-		Vector3 startPos = cam.position;
 		float distanceToTarget = Vector3.Distance(cam.position, t.position);
-		float distanceToStart = Vector3.Distance(cam.position, startPos);
-		float totalDistance = distanceToTarget;
 		Vector3 vel = Vector3.zero;
 
 		while (distanceToTarget > 0.1f)
 		{
 			cam.position = Vector3.SmoothDamp(cam.position, t.position, ref vel, zoomSpeed * Time.deltaTime);
 			distanceToTarget = Vector3.Distance(cam.position, t.position);
-			distanceToStart = Vector3.Distance(cam.position, startPos);
 			yield return null;
 		}
 

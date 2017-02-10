@@ -44,7 +44,6 @@ public class RippleNotification : MonoBehaviour {
 		while (i < rippleDensity) {
 			//GameObject obj = (GameObject)Instantiate(prefab);
 			int objId = pool.GetObject();
-			Debug.Log("OBJECT ID "+objId);
 			if (objId != -1) {
 				Transform t = pool.ObjectTransform(objId);
 				RectTransform rect = t.gameObject.GetComponent<RectTransform>();

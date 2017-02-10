@@ -59,7 +59,7 @@ namespace Util {
 			{
 				_transitionAlpha += fadeTransitionSmooth * Time.deltaTime;
 				_canvasGroup.alpha = _transitionAlpha;
-				yield return new WaitForSeconds(Time.deltaTime);
+				yield return null;
 			}
 			_canvasGroup.alpha = 1;
 			sceneIsFadedOut = true;
@@ -81,7 +81,7 @@ namespace Util {
 					_canvasGroup = GetComponent<CanvasGroup>();
 				_transitionAlpha -= fadeTransitionSmooth * Time.deltaTime;
 				_canvasGroup.alpha = _transitionAlpha;
-				yield return new WaitForSeconds(Time.deltaTime);
+				yield return null;
 			}
 			_canvasGroup.alpha = 0;
 			sceneIsFadedOut = false;

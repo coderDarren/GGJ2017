@@ -74,11 +74,11 @@ public class EnvironmentColorModule : MonoBehaviour {
 	{
 		SpriteColorOvertime colorOvertime = background.GetComponent<SpriteColorOvertime>();
 		colorOvertime.pause = true;
-		Color col = background.color;
-		float  _rVel = 0;
-		float  _gVel = 0;
-		float  _bVel = 0;
-		float  _aVel = 0;
+		//Color col = background.color;
+		//float  _rVel = 0;
+		//float  _gVel = 0;
+		//float  _bVel = 0;
+		//float  _aVel = 0;
 
 		while (!ColorsMatch(background.color, targetBackgroundColor)) {
 			//col.r = Mathf.SmoothDamp(col.r, targetBackgroundColor.r, ref _rVel, 5);

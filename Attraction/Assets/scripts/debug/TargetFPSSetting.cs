@@ -4,6 +4,6 @@ using System.Collections;
 public class TargetFPSSetting : MonoBehaviour {
 
 	void Awake() {
-		Application.targetFrameRate = 200;
+		Application.targetFrameRate = 60;
 	}
 }

@@ -23,7 +23,7 @@ namespace Util {
 		public float audioFadeInSpeed = 1.5f;
 		public float audioFadeOutSpeed = 0.25f;
 
-		AudioSource audio;
+		AudioSource audioSource;
 		AudioInfo targetInfo;
 		Hashtable audioLookupTable;
 		AudioState music;
@@ -44,7 +44,7 @@ namespace Util {
 		void Start()
 		{
 			if (Instance == this) {
-				audio = GetComponent<AudioSource>();
+				audioSource = GetComponent<AudioSource>();
 				ConfigurePrefs();
 				ConfigureAudio();
 				SetSceneBasedAudio(GameScene.SPLASH);
@@ -84,19 +84,19 @@ namespace Util {
 			if (toVolume == 0)
 				fadeSpeed = audioFadeOutSpeed;
 
-			while (Mathf.Abs(toVolume - audio.volume) > 0.01f)
+			while (Mathf.Abs(toVolume - audioSource.volume) > 0.01f)
 			{
-				audio.volume = Mathf.Lerp(audio.volume, toVolume, fadeSpeed * Time.deltaTime);
+				audioSource.volume = Mathf.Lerp(audioSource.volume, toVolume, fadeSpeed * Time.deltaTime);
 				yield return null;
 			}
 
-			audio.volume = toVolume;
+			audioSource.volume = toVolume;
 
 			if (toVolume == 0 && music == AudioState.ON) {
-				audio.Stop();
-				audio.clip = targetInfo.clip;
-				audio.time = Random.Range(0, 2 * (audio.clip.length / 3));
-				audio.Play();
+				audioSource.Stop();
+				audioSource.clip = targetInfo.clip;
+				audioSource.time = Random.Range(0, 2 * (audioSource.clip.length / 3));
+				audioSource.Play();
 				StartCoroutine("FadeAudioVolume", targetInfo.volume);
 			}
 		}
@@ -106,7 +106,7 @@ namespace Util {
 			int index = (int)gameScene;
 			targetInfo = (AudioInfo)audioLookupTable[index];
 
-			if (targetInfo.clip == audio.clip)
+			if (targetInfo.clip == audioSource.clip)
 				return;
 
 			if (music == AudioState.OFF)
@@ -130,15 +130,15 @@ namespace Util {
 			SetStatus(Types.AudioType.SFX, sfx);
 		}
 
-		public int GetStatus(Types.AudioType audio)
+		public int GetStatus(Types.AudioType audioSource)
 		{
-			return PlayerPrefs.GetInt(audio.ToString());
+			return PlayerPrefs.GetInt(audioSource.ToString());
 		}
 
-		void SetStatus(Types.AudioType audio, AudioState state)
+		void SetStatus(Types.AudioType audioSource, AudioState state)
 		{
 			int status = state == AudioState.ON ? 1 : 0;
-			PlayerPrefs.SetInt(audio.ToString(), status);
+			PlayerPrefs.SetInt(audioSource.ToString(), status);
 		}
 	}
 }

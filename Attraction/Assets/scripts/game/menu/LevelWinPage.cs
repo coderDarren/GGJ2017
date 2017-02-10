@@ -62,11 +62,11 @@ public class LevelWinPage : MonoBehaviour {
 		//add new stars earned
 		if (stars - status >= 0) {
 			uint unlockedStars = (uint)(stars - status) + 1;
-			SessionManager.Instance.IncrementEvent(Remnant.GPGSIds.event_stars_earned, unlockedStars);
+			ProgressManager.Instance.AddStars(unlockedStars);
 		}
 
 		//increment galaxy completion achievement
-		if (status <= 1) { //means before this win, level had not been beaten
+		if (status <= 1) { //means before this win, level was not won
 			SessionManager.Instance.IncrementLevelAchievement(galaxy, level, 1);
 		}
 	}
@@ -81,7 +81,7 @@ public class LevelWinPage : MonoBehaviour {
 	{
 		while (img.fillAmount < 0.98f)
 		{
-			img.fillAmount += 1 * Time.deltaTime;
+			img.fillAmount += 3 * Time.deltaTime;
 			yield return null;
 		}
 
