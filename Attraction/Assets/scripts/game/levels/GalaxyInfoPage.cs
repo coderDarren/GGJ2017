@@ -13,7 +13,6 @@ public class GalaxyInfoPage : MonoBehaviour {
 	{
 		pageLoadEvent.pageToLoad = pageToLoad;
 		infoText.text = StoryManager.Instance.GetStory(galaxy, 0);
-		ProgressManager.Instance.CompleteProgress(galaxy, 0);
 	}
 
 }

@@ -17,7 +17,6 @@ public class ProgressNotificationEffect : MonoBehaviour {
 	public GalaxyType galaxy;
 	public int level;
 	public bool checkProgress = true;
-	int galaxyStatus;
 	bool on = true;
 
 	public bool On 
@@ -29,10 +28,19 @@ public class ProgressNotificationEffect : MonoBehaviour {
 	void OnEnable()
 	{
 		if (checkProgress) {
-			galaxyStatus = ProgressManager.Instance.GetStatus(galaxy, level);
-			if ((level == 0 && galaxyStatus == 0) ||
-				(level > 0 && galaxyStatus == 0))
-				StartCoroutine("RunRippleEffect");
+			if (level == 0) {
+				if (ProgressManager.Instance.GalaxyIsAvailable(galaxy) &&
+					!ProgressManager.Instance.LevelHasBeenAttempted(galaxy, 1)) {
+					StartCoroutine("RunRippleEffect");
+				}
+			}
+			else {
+				int prevLevelStars = ProgressManager.Instance.GetLevelStars(galaxy, level - 1);
+				bool attempted = ProgressManager.Instance.LevelHasBeenAttempted(galaxy, level);
+				if (prevLevelStars > 0 && !attempted) {
+					StartCoroutine("RunRippleEffect");
+				}
+			}
 		}
 		else {
 			StartCoroutine("RunRippleEffect");

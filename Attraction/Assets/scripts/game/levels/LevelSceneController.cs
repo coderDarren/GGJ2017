@@ -80,8 +80,8 @@ public class LevelSceneController : MonoBehaviour {
 			TutorialManager.Instance.StartTutorial(TutorialType.GALAXIES);
 		}
 		else {
-			int status = ProgressManager.Instance.GetStatus(activeGalaxy, 0);
-			if (status == 0) {
+			bool galaxyIsAvailable = ProgressManager.Instance.GalaxyIsAvailable(activeGalaxy);
+			if (!galaxyIsAvailable) {
 				pageManager.LoadPage(PageType.GALAXY_INFO);
 				GalaxyInfoPage infoPage = GameObject.FindObjectOfType<GalaxyInfoPage>();
 				infoPage.ConfigureInfo(activeGalaxy, activeZone.pageToLoad);

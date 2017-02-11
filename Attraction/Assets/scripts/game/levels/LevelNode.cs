@@ -16,48 +16,50 @@ public class LevelNode : MonoBehaviour {
 	public Color disabledColor, enabledColor;
 
 	ProgressManager progress;
-	int status;
+	bool available;
+	int stars;
 
 	void Start()
 	{
 		progress = ProgressManager.Instance;
-		status = progress.GetStatus(galaxy, level);
-		ParseStatus();
+		available = progress.LevelIsAvailable(galaxy, level);
+		stars = progress.GetLevelStars(galaxy, level);
+		HandleStatus();
 	}
 
-	void ParseStatus()
+	void HandleStatus()
 	{
-		switch (status)
-		{
-			case -1:
-				star1.enabled = false;
-				star2.enabled = false;
-				star3.enabled = false;
-				levelNum.enabled = false;
+		if (!available) {
+			star1.enabled = false;
+			star2.enabled = false;
+			star3.enabled = false;
+			levelNum.enabled = false;
+			padLock.color = disabledColor;
+			circle.color = disabledColor;
+			button.enabled = false;
+			return;
+		}
+
+		switch (stars) {
+			case 0:
+				padLock.enabled = false;
 				padLock.color = disabledColor;
-				circle.color = disabledColor;
-				button.enabled = false;
+				circle.color = enabledColor;
 				break;
-			case 0: //we use this status to add the ripple effect to newly unlocked levels
-			case 1: //if this status is active, it means the player has selected this level, but no stars earned
+			case 1:
+				star1.sprite = filledStar;
 				padLock.enabled = false;
 				padLock.color = disabledColor;
 				circle.color = enabledColor;
 				break;
 			case 2:
 				star1.sprite = filledStar;
-				padLock.enabled = false;
-				padLock.color = disabledColor;
-				circle.color = enabledColor;
-				break;
-			case 3:
-				star1.sprite = filledStar;
 				star2.sprite = filledStar;
 				padLock.enabled = false;
 				padLock.color = disabledColor;
 				circle.color = enabledColor;
 				break;
-			case 4:
+			case 3:
 				star1.sprite = filledStar;
 				star2.sprite = filledStar;
 				star3.sprite = filledStar;
@@ -66,5 +68,6 @@ public class LevelNode : MonoBehaviour {
 				circle.color = enabledColor;
 				break;
 		}
+
 	}
 }

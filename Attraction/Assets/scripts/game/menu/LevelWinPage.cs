@@ -12,62 +12,34 @@ public class LevelWinPage : MonoBehaviour {
 
 	public void ConfigurePage(GalaxyType galaxy, int level, int lives)
 	{
-		int status = ProgressManager.Instance.GetStatus(galaxy, level);
-		int currStars = 0;
-		switch (status)
-		{
-			case 2: currStars = 1; break;
-			case 3: currStars = 2; break;
-			case 4: currStars = 3; break;
-			default: currStars = 0; break;
-		}
-
 		int sessionStars = lives >= 3 ? 3 : lives;
+		int currStars = ProgressManager.Instance.GetLevelStars(galaxy, level);
 
-		HandleGooglePlayEvents(galaxy, level, sessionStars);
-
-		if (sessionStars > currStars) {
-			ProgressManager.Instance.SetProgress(galaxy, level, sessionStars + 1);
+		//add new stars earned
+		int unlockedStars = sessionStars - currStars;
+		if (unlockedStars > 0) {
+			ProgressManager.Instance.MarkLevelStars(galaxy, level, unlockedStars); //adds to level star count
+			ProgressManager.Instance.AddStars((uint)unlockedStars); //adds to total star count
 		}
 
+		//increment galaxy completion achievement
+		if (currStars == 0) { //means before this win, level was not won
+			ProgressManager.Instance.MarkLevelAchievement(galaxy, level);
+		}
+
+		ProgressManager.Instance.MarkLevelWins(galaxy, level);
+		
 		string story = StoryManager.Instance.GetStory(galaxy, level);
 		if (story != null) {
 			storyText.text = story;
 		}
+
 		totalStars = sessionStars;
 		StartCoroutine("WaitToFill");
 
-		if (level < 5)
-		{
-			status = ProgressManager.Instance.GetStatus(galaxy, level + 1);
-			if (status == -1) //the level is locked
-			{
-				ProgressManager.Instance.SetProgress(galaxy, level + 1, 0); //unlock it
-			}
-		}
-		else
+		if (level == 5)
 		{
 			LevelLoader.Instance.ResetTargetGalaxy();
-			GalaxyType nextGalaxy = (GalaxyType)((int)galaxy + 1);
-			status = ProgressManager.Instance.GetStatus(nextGalaxy, 0);
-			if (status == -1) //galaxy is locked
-				ProgressManager.Instance.SetProgress(nextGalaxy, 0, 0); //unlock it
-		}
-	}
-
-	void HandleGooglePlayEvents(GalaxyType galaxy, int level, int stars) {
-
-		int status = ProgressManager.Instance.GetStatus(galaxy, level);
-
-		//add new stars earned
-		if (stars - status >= 0) {
-			uint unlockedStars = (uint)(stars - status) + 1;
-			ProgressManager.Instance.AddStars(unlockedStars);
-		}
-
-		//increment galaxy completion achievement
-		if (status <= 1) { //means before this win, level was not won
-			SessionManager.Instance.IncrementLevelAchievement(galaxy, level, 1);
 		}
 	}
 

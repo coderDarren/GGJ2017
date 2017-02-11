@@ -11,10 +11,6 @@ public class ProgressManager : MonoBehaviour {
 
 	public static ProgressManager Instance;
 
-	const string INITIALIZED = "PROGRESS_INITIALIZED";
-	const string RESOURCES = Remnant.GPGSIds.leaderboard_resources_earned;
-	const string STARS = Remnant.GPGSIds.leaderboard_stars_earned;
-
 	void Awake()
 	{
 		if (Instance != null)
@@ -27,93 +23,139 @@ public class ProgressManager : MonoBehaviour {
 		}
 	}
 
-	void InitializeProgress()
-	{
-		Array galaxies = Enum.GetValues(typeof(GalaxyType));
-		foreach (GalaxyType galaxy in galaxies)
-		{
-			PlayerPrefs.SetInt(SessionManager.Instance.userId + galaxy.ToString() + "0", -1);
-			for (int i = 1; i <= 10; i++) {
-				int value = i == 1 ? 0 : -1; //first level of the galaxy will always be available
-				PlayerPrefs.SetInt(SessionManager.Instance.userId + galaxy.ToString() + i.ToString(), value);
-			}
-		}
-		PlayerPrefs.SetInt(SessionManager.Instance.userId + INITIALIZED, 1);
-		PlayerPrefs.SetInt(SessionManager.Instance.userId + GalaxyType.HOME_GALAXY.ToString() + "0", 0); //home should always be available - especially after a progress reset
-		SetResources(0);
-		SetStars(0);
-	}
-
-	public void CheckResetProgress()
-	{
-		int init = GetStatus(INITIALIZED);
-		if (init == 1)
-			return;
-		InitializeProgress();
-	}
-
 	public void ResetProgress()
 	{
-		InitializeProgress();
+		DataStorage.LoadUser(SessionManager.Instance.userId, true);
 	}
 
-	public int GetStatus(string pref)
-	{
-		return PlayerPrefs.GetInt(SessionManager.Instance.userId + pref);
+	public GalaxyType PreviousGalaxy(GalaxyType galaxy) {
+		switch (galaxy) {
+			case GalaxyType.DAHKRI_GALAXY: return GalaxyType.HOME_GALAXY;
+			case GalaxyType.KYDOR_GALAXY: return GalaxyType.VIDON_GALAXY;
+			case GalaxyType.ZAX_GALAXY: return GalaxyType.XILYANTIPHOR_GALAXY;
+			case GalaxyType.MALIX_GALAXY: return GalaxyType.RYKTAR_GALAXY;
+			case GalaxyType.XILYANTIPHOR_GALAXY: return GalaxyType.DAHKRI_GALAXY;
+			case GalaxyType.VIDON_GALAXY: return GalaxyType.ZAX_GALAXY;
+			case GalaxyType.RYKTAR_GALAXY: return GalaxyType.KYDOR_GALAXY;
+			default: 
+				return GalaxyType.HOME_GALAXY;
+		}
 	}
 
-	public int GetStatus(GalaxyType galaxy, int level)
-	{
-		return PlayerPrefs.GetInt(SessionManager.Instance.userId + galaxy.ToString() + level.ToString());
+	public GalaxyType NextGalaxy(GalaxyType galaxy) {
+		switch (galaxy) {
+			case GalaxyType.DAHKRI_GALAXY: return GalaxyType.XILYANTIPHOR_GALAXY;
+			case GalaxyType.KYDOR_GALAXY: return GalaxyType.RYKTAR_GALAXY;
+			case GalaxyType.ZAX_GALAXY: return GalaxyType.VIDON_GALAXY;
+			case GalaxyType.HOME_GALAXY: return GalaxyType.DAHKRI_GALAXY;
+			case GalaxyType.XILYANTIPHOR_GALAXY: return GalaxyType.ZAX_GALAXY;
+			case GalaxyType.VIDON_GALAXY: return GalaxyType.KYDOR_GALAXY;
+			case GalaxyType.RYKTAR_GALAXY: return GalaxyType.MALIX_GALAXY;
+			default:
+				return GalaxyType.MALIX_GALAXY;
+		}
 	}
 
-	public void CompleteProgress(GalaxyType galaxy, int level)
+	public bool GalaxyIsAvailable(GalaxyType galaxy)
 	{
-		SetProgress(galaxy, level, 1);
+		if (galaxy == GalaxyType.HOME_GALAXY) return true;
+
+		GalaxyType previousGalaxy = PreviousGalaxy(galaxy);
+		int stars = GetLevelStars(previousGalaxy, 5);
+
+		if (stars > 0) {
+			return true;
+		}
+
+		return false;
 	}
 
-	public void SetProgress(GalaxyType galaxy, int level, int progress)
+	public bool LevelIsAvailable(GalaxyType galaxy, int level) 
 	{
-		PlayerPrefs.SetInt(SessionManager.Instance.userId + galaxy.ToString() + level.ToString(), progress);
+		//if level is 1, return true
+		if (level == 1) return true;
+
+		//otherwise we need to check if the previous level has been completed
+		int checkLevel = level - 1;
+		int stars = GetLevelStars(galaxy, checkLevel);
+		
+		if (stars > 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public bool LevelHasBeenAttempted(GalaxyType galaxy, int level) 
+	{
+		string dataId = GPGSUtil.GalaxyLevelAttemptsId(galaxy, level);
+		int attempts = DataStorage.GetLocalData(dataId);
+		if (attempts > 0) {
+			return true;
+		}
+		return false;
+	}
+
+	public int GetLevelStars(GalaxyType galaxy, int level)
+	{
+		string dataId = GPGSUtil.GalaxyLevelStarsId(galaxy, level);
+		return DataStorage.GetLocalData(dataId);
+	}
+
+	public void MarkLevelAttempted(GalaxyType galaxy, int level)
+	{
+		//Debug.Log("GALAXY "+galaxy+" LEVEL "+level+" IS BEING ATTEMPTED");
+		string dataId = GPGSUtil.GalaxyLevelAttemptsId(galaxy, level);
+		DataStorage.IncrementEvent(dataId, 1);
+	}
+
+	public void MarkLevelStars(GalaxyType galaxy, int level, int stars)
+	{
+		//Debug.Log("GALAXY "+galaxy+" LEVEL "+level+" IS EARNING " +stars+ " STARS");
+		string dataId = GPGSUtil.GalaxyLevelStarsId(galaxy, level);
+		DataStorage.IncrementEvent(dataId, (uint)stars);
+	}
+
+	public void MarkLevelWins(GalaxyType galaxy, int level)
+	{
+		//Debug.Log("GALAXY "+galaxy+" LEVEL "+level+" HAS BEEN WON");
+		string dataId = GPGSUtil.GalaxyLevelWinsId(galaxy, level);
+		DataStorage.IncrementEvent(dataId, 1);
+	}
+
+	public void MarkLevelAchievement(GalaxyType galaxy, int level) 
+	{
+		//Debug.Log("GALAXY "+galaxy+" LEVEL "+level+" HAS BEEN ACHIEVED");
+		DataStorage.IncrementLevelAchievement(galaxy, level, 1);
 	}
 
 	public int GetResources() {
-		if (SessionManager.Instance.validUser) {
-			return SessionManager.Instance.userResources;	
-		}
-		return PlayerPrefs.GetInt(SessionManager.Instance.userId + RESOURCES);
+		return DataStorage.GetLocalData(Remnant.GPGSIds.leaderboard_resources_earned);
 	}
 
 	public int GetStars() {
-		if (SessionManager.Instance.validUser) {
-			return SessionManager.Instance.userStars;	
-		}
-		return PlayerPrefs.GetInt(SessionManager.Instance.userId + STARS);
+		return DataStorage.GetLocalData(Remnant.GPGSIds.leaderboard_stars_earned);
 	}
 
 	public void AddResources(uint amount) {
 		int current = GetResources();
 		SetResources((uint)current + amount);
-		SessionManager.Instance.IncrementEvent(Remnant.GPGSIds.event_resources_earned, amount);
+		DataStorage.IncrementEvent(Remnant.GPGSIds.event_resources_earned, amount);
 	}
 
 	void SetResources(uint amount) {
-		PlayerPrefs.SetInt(SessionManager.Instance.userId + RESOURCES, (int)amount);
-		SessionManager.Instance.ReportResourceScore(amount);
-		
+		DataStorage.ReportLeaderboardScore(Remnant.GPGSIds.leaderboard_resources_earned, amount);
 		try { UpdateResourcesText((int)amount); } catch(System.NullReferenceException e) {}
 	}
 
 	public void AddStars(uint amount) {
 		int current = GetStars();
 		SetStars((uint)current + amount);
-		SessionManager.Instance.IncrementEvent(Remnant.GPGSIds.event_stars_earned, amount);
+		DataStorage.IncrementEvent(Remnant.GPGSIds.event_stars_earned, amount);
 	}
 
 	void SetStars(uint amount) {
-		PlayerPrefs.SetInt(SessionManager.Instance.userId + STARS, (int)amount);
-		SessionManager.Instance.ReportStarScore(amount);
-
+		DataStorage.ReportLeaderboardScore(Remnant.GPGSIds.leaderboard_stars_earned, amount);
 		try { UpdateStarsText((int)amount); } catch(System.NullReferenceException e) {}
 	}
 }
