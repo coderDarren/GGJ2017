@@ -1,17 +1,25 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 using Types;
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using GooglePlayGames.BasicApi.Events;
+using DebugServices;
 
 public class DataStorage {
 
+	public static bool LOADING_USER 
+	{
+		get { return loadJobs > 0 ? true : false; }
+	}
+
 	static string INITIALIZED = "INITIALIZED";
 	static string USER_ID;
-	
-	public static bool LOADING_USER { get; private set; }
 
+	static bool debug = false;
+	static int loadJobs = 0;
+	
 	public static void LoadUser(string user, bool reset) {
 
 		USER_ID = user;
@@ -20,8 +28,6 @@ public class DataStorage {
 		int localStorageStatus = PlayerPrefs.GetInt(USER_ID+INITIALIZED);
 
 		if (localStorageStatus != 1 || reset) {
-
-			LOADING_USER = true;
 
 			//loop galaxies starting with index 2 (HOME)
 			int galaxy = 2;
@@ -33,11 +39,16 @@ public class DataStorage {
 					string attemptsEventId = GPGSUtil.GalaxyLevelAttemptsId(galaxyType, level);
 					string winsEventId = GPGSUtil.GalaxyLevelWinsId(galaxyType, level);
 					string starsEventId = GPGSUtil.GalaxyLevelStarsId(galaxyType, level);
+
+					loadJobs += 3;
+
 					FetchEventForLocalStorage(attemptsEventId);
 					FetchEventForLocalStorage(winsEventId);
 					FetchEventForLocalStorage(starsEventId);
 				}
 			}
+
+			loadJobs += 5;
 
 			//leaderboard stars, resources
 			FetchLeaderboardForLocalStorage(Remnant.GPGSIds.leaderboard_stars_earned);
@@ -49,8 +60,6 @@ public class DataStorage {
 			FetchEventForLocalStorage(Remnant.GPGSIds.event_ships_purchased);
 
 			PlayerPrefs.SetInt(USER_ID+INITIALIZED, 1);
-
-			LOADING_USER = false;
 		}
 	}
 
@@ -95,10 +104,13 @@ public class DataStorage {
 	}
 
 	public static int GetLocalData(string dataId) {
-		return PlayerPrefs.GetInt(USER_ID+dataId);
+		int ret = PlayerPrefs.GetInt(USER_ID+dataId);
+		if (debug) Debugger.Log("Retrieving data for " + GPGSUtil.GetIdDecrypted(dataId) + " => " +ret, DebugFlag.TASK);
+		return ret;
 	}
 
 	public static void SaveLocalData(string dataId, int amount) {
+		if (debug) Debugger.Log("Saving data " +amount+ " to " +GPGSUtil.GetIdDecrypted(dataId), DebugFlag.TASK);
 		PlayerPrefs.SetInt(USER_ID+dataId, amount);
 	}
 
@@ -118,11 +130,10 @@ public class DataStorage {
 			LeaderboardCollection.Public,
 			LeaderboardTimeSpan.AllTime,
 			(data) => {	
-				fetchData = (int)data.Scores[0].value;
+				fetchData = (int)data.PlayerScore.value;
 				SaveLocalData(leaderboardId, fetchData);
-				//for (int i = 0; i < data.Scores.Length; i++) {
-				//	Debug.LogError("SCORE DATA => "+data.Scores[i].value);
-				//}
+				loadJobs--;
+				Debugger.Log("Load Jobs => "+loadJobs, DebugFlag.STEP);
 		});
 	}
 
@@ -144,7 +155,8 @@ public class DataStorage {
 			(rs, e) => {
 				fetchData = (int)e.CurrentCount; //store data
 				SaveLocalData(eventId, fetchData);
-				//Debug.LogError("EVENT "+eventId+" VALUE IS " +fetchData);
+				loadJobs--;
+				Debugger.Log("Load Jobs => "+loadJobs, DebugFlag.STEP);
 		});
 	}
 

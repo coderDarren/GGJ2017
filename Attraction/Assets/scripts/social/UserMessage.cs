@@ -8,22 +8,17 @@ public class UserMessage : MonoBehaviour {
 	Text t;
 	SessionManager session;
 
-	void OnEnable() {
+	void Start() {
 		session = SessionManager.Instance;
 		t = GetComponent<Text>();
-		OnRefreshUsability();
-		SessionManager.RefreshSocialUsability += OnRefreshUsability;
+		Init();
 	}
 
-	void OnDisable() {
-		SessionManager.RefreshSocialUsability -= OnRefreshUsability;
-	}
-
-	void OnRefreshUsability() {
+	void Init() {
 		if (session.validUser) {
 			t.text = "Hello,\n" + session.userName;
 		} else {
-			t.text = "Not logged in.\nProgress will not be linked to your account.";
+			t.text = "Logged in as Guest.\nProgress will not be linked to any account.";
 		}
 	}
 }

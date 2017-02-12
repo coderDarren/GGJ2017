@@ -51,22 +51,22 @@ namespace DebugServices {
 			{
 				case DebugFlag.EVENT: 
 					_prefix = "event: ";
-					if (DebugConst.DEBUG_EVENTS)
+					if (DebugConst.DEBUG_EVENTS && DebugConst.DEBUG)
 						_ret =  true;
 					break;
 				case DebugFlag.TASK: 
 					_prefix = "task: ";
-					if (DebugConst.DEBUG_TASKS)
+					if (DebugConst.DEBUG_TASKS && DebugConst.DEBUG)
 						_ret =  true;
 					break;
 				case DebugFlag.STEP:
 					_prefix = "step: "; 
-					if (DebugConst.DEBUG_STEPS)
+					if (DebugConst.DEBUG_STEPS && DebugConst.DEBUG)
 						_ret =  true;
 					break;
 				case DebugFlag.LOAD:
 					_prefix = "load: "; 
-					if (DebugConst.DEBUG_LOAD)
+					if (DebugConst.DEBUG_LOAD && DebugConst.DEBUG)
 						_ret = true;
 					break;
 			}

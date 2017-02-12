@@ -51,7 +51,7 @@ namespace Util {
 					distTraveled = targetFill == 1 ? 1 - img.fillAmount : img.fillAmount;
 					distTraveled += 0.1f;
 					img.fillAmount = Mathf.SmoothDamp(img.fillAmount, targetFill, ref vel, speed * distTraveled);
-					//rect.rotation *= Quaternion.Euler(0, 0, 500 * rot * _gear.turnDirection * Time.deltaTime);
+					rect.rotation *= Quaternion.Euler(0, 0, rot * _gear.turnDirection * Time.deltaTime);
 
 					if (Mathf.Abs(img.fillAmount - targetFill) < 0.01f)
 					{

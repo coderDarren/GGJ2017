@@ -8,7 +8,9 @@ public class SocialEvent : ButtonEvent {
 	public enum SocialEventType {
 		LOGIN,
 		ACHIEVEMENTS,
-		LEADERBOARD
+		LEADERBOARD,
+		LEADERBOARD_STARS,
+		LEADERBOARD_RESOURCES
 	}
 	public SocialEventType eventType;
 	public Color enabledColor, disabledColor;
@@ -16,18 +18,13 @@ public class SocialEvent : ButtonEvent {
 
 	SessionManager session;
 
-	void OnEnable() {
+	void Start() {
 		session = SessionManager.Instance;
 		InitButton();
-		OnRefreshUsability();
-		SessionManager.RefreshSocialUsability += OnRefreshUsability;
+		Init();
 	}
 
-	void OnDisable() {
-		SessionManager.RefreshSocialUsability -= OnRefreshUsability;
-	}
-
-	void OnRefreshUsability() {
+	void Init() {
 		if (eventType != SocialEventType.LOGIN) {
 			if (session.validUser) {
 				_image.color = enabledColor;
@@ -47,6 +44,8 @@ public class SocialEvent : ButtonEvent {
 			case SocialEventType.LOGIN: session.HandleLogin(); break;
 			case SocialEventType.ACHIEVEMENTS: session.ShowAchievements(); break;
 			case SocialEventType.LEADERBOARD: session.ShowLeaderboard(); break;
+			case SocialEventType.LEADERBOARD_RESOURCES: session.ShowLeaderboard(Remnant.GPGSIds.leaderboard_resources_earned); break;
+			case SocialEventType.LEADERBOARD_STARS: session.ShowLeaderboard(Remnant.GPGSIds.leaderboard_stars_earned); break;
 		}
 	}
 }

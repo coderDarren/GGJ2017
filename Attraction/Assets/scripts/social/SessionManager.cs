@@ -13,9 +13,6 @@ public class SessionManager : MonoBehaviour {
 
 	public static SessionManager Instance;
 
-	public delegate void RefreshDelegate();
-	public static event RefreshDelegate RefreshSocialUsability;
-
 	public string userName { get; private set; }
 	public string userId { get; private set; }
 	public bool validUser { 
@@ -39,7 +36,9 @@ public class SessionManager : MonoBehaviour {
 	}
 
 	IEnumerator WaitToStart() {
-		yield return new WaitForSeconds(2);
+		while (DataStorage.LOADING_USER) {
+			yield return null;
+		}
 		scene.LoadScene(GameScene.MENU);
 	}
 
@@ -56,50 +55,41 @@ public class SessionManager : MonoBehaviour {
 			userName = Social.localUser.userName;
 			userId = Social.localUser.id;
 		} else {
+			userName = "Guest";
 			userId = string.Empty;
 		}
 		DataStorage.LoadUser(userId, false);
 		StartCoroutine("WaitToStart");
 	}
 
-	IEnumerator Logout() {
-		yield return null;
+	void Logout() {
 		PlayGamesPlatform.Instance.SignOut();
-		while (validUser) {
-			yield return null;
-		}
-		Login();
+		userName = "Guest";
+		userId = string.Empty;
+		PageManager.Instance.TurnOffPage(PageType.SOCIAL, PageType.SOCIAL_LOAD);
 	}
 
 	void Login() {
-		//ConfigureGooglePlay();
 		Social.localUser.Authenticate((success) => {
 			if (success) {
 				userName = Social.localUser.userName;
 				userId = Social.localUser.id;
 			} else {
+				userName = "Guest";
 				userId = string.Empty;
 			}
-			DataStorage.LoadUser(userId, false);
-			StopCoroutine("WaitToRefreshSocialUsability");
-			StartCoroutine("WaitToRefreshSocialUsability");
+			PageManager.Instance.TurnOffPage(PageType.SOCIAL, PageType.SOCIAL_LOAD);
 		});
-	}
-
-	IEnumerator WaitToRefreshSocialUsability() {
-		while (DataStorage.LOADING_USER) {
-			yield return null;
-		}
-		RefreshSocialUsability(); 
 	}
 
 	public void HandleLogin() {
 
-#if UNITY_ANDROID
-		StopCoroutine("Logout");
-		StartCoroutine("Logout");
-#endif
-
+		if (validUser) {
+			Logout();
+		}
+		else {
+			Login();
+		}
 	}
 
 	public void ShowAchievements() {
@@ -112,4 +102,8 @@ public class SessionManager : MonoBehaviour {
 		PlayGamesPlatform.Instance.ShowLeaderboardUI();
 	}
 
+	public void ShowLeaderboard(string leaderboardId) {
+
+		PlayGamesPlatform.Instance.ShowLeaderboardUI(leaderboardId);
+	}
 }

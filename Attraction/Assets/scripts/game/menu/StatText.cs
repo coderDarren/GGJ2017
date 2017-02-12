@@ -71,7 +71,6 @@ public class StatText : MonoBehaviour {
 
 	void SetText() {
 
-
 		if (!useFormatting) {
 			t.text = prefix + string.Format("{0:n0}", current) + suffix;
 			return;
