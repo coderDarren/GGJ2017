@@ -58,6 +58,21 @@ namespace Types {
 		SHIP_08
 	}
 
+	public enum TimestampType {
+		SHIP_01_ARMOR,
+		SHIP_02_ARMOR,
+		SHIP_03_ARMOR,
+		SHIP_04_ARMOR,
+		SHIP_05_ARMOR,
+		SHIP_06_ARMOR,
+		SHIP_07_ARMOR,
+		SHIP_08_ARMOR
+	}
+
+	public enum MiscType {
+		PLAYER_SHIP_TYPE
+	}
+
 	public enum AudioState 
 	{
 		ON,

@@ -329,4 +329,18 @@ public class GPGSUtil {
 				return string.Empty;	
 		}
 	}
+
+	public static string ShipId(ShipType ship) {
+		switch (ship) {
+			case ShipType.SHIP_01: return GPGSIds.event_ship_01_purchased;
+			case ShipType.SHIP_02: return GPGSIds.event_ship_02_purchased;
+			case ShipType.SHIP_03: return GPGSIds.event_ship_03_purchased;
+			case ShipType.SHIP_04: return GPGSIds.event_ship_04_purchased;
+			case ShipType.SHIP_05: return GPGSIds.event_ship_05_purchased;
+			case ShipType.SHIP_06: return GPGSIds.event_ship_06_purchased;
+			case ShipType.SHIP_07: return GPGSIds.event_ship_07_purchased;
+			case ShipType.SHIP_08: return GPGSIds.event_ship_08_purchased;
+		}
+		return string.Empty;
+	}
 }

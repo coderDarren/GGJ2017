@@ -11,9 +11,9 @@ public class EnviroFader : MonoBehaviour {
 
 	void Start() {
 		sprite = GetComponent<SpriteRenderer>();
-		sprite.color = background.color;
+		//sprite.color = background.color;
 		ship = GameObject.FindObjectOfType<ShipController>();
-		ship.GetComponent<SpriteRenderer>().sortingOrder = 0;
+		//ship.GetComponent<SpriteRenderer>().sortingOrder = 0;
 		StartCoroutine("FadeOut");
 	}
 
@@ -21,8 +21,8 @@ public class EnviroFader : MonoBehaviour {
 		float target = 0;
 		Color curr = sprite.color;
 
-		while (curr.a > 0.015f) {
-			curr.a = Mathf.Lerp(curr.a, target, 1 * Time.deltaTime);
+		while (curr.a > 0.05f) {
+			curr.a = Mathf.Lerp(curr.a, target, 2 * Time.deltaTime);
 			sprite.color = curr;
 			yield return null;
 		}
@@ -30,7 +30,7 @@ public class EnviroFader : MonoBehaviour {
 		curr.a = target;
 		sprite.color = curr;
 
-		ship.GetComponent<SpriteRenderer>().sortingOrder = 10;
+		//ship.GetComponent<SpriteRenderer>().sortingOrder = 10;
 		ship.StartCoroutine("WaitToLaunch");
 	}
 }

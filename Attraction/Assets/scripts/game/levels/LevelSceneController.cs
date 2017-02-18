@@ -77,7 +77,7 @@ public class LevelSceneController : MonoBehaviour {
 		if (activeZone == galaxyViewPoint)
 		{
 			pageManager.LoadPage(activeZone.pageToLoad);
-			TutorialManager.Instance.StartTutorial(TutorialType.GALAXIES);
+			//TutorialManager.Instance.StartTutorial(TutorialType.GALAXIES);
 		}
 		else {
 			bool galaxyIsAvailable = ProgressManager.Instance.GalaxyIsAvailable(activeGalaxy);

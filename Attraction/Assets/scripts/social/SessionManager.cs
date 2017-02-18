@@ -39,6 +39,7 @@ public class SessionManager : MonoBehaviour {
 		while (DataStorage.LOADING_USER) {
 			yield return null;
 		}
+		ProgressManager.Instance.StartCoroutine("ProcessTimestamps");
 		scene.LoadScene(GameScene.MENU);
 	}
 
@@ -46,7 +47,7 @@ public class SessionManager : MonoBehaviour {
 		PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
 																			  .Build();
 		PlayGamesPlatform.InitializeInstance(config);
-		PlayGamesPlatform.DebugLogEnabled = true;
+		PlayGamesPlatform.DebugLogEnabled = false;
 		PlayGamesPlatform.Activate();
 	}
 

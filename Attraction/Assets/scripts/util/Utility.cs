@@ -25,6 +25,20 @@ namespace Util {
 			}
 		}
 
+		public static string GalaxyToString(GalaxyType galaxy) {
+			switch (galaxy) {
+				case GalaxyType.HOME_GALAXY: return "Home";
+				case GalaxyType.DAHKRI_GALAXY: return "Dah'Kri";
+				case GalaxyType.KYDOR_GALAXY: return "Kydor";
+				case GalaxyType.ZAX_GALAXY: return "Zax";
+				case GalaxyType.MALIX_GALAXY: return "Malix";
+				case GalaxyType.XILYANTIPHOR_GALAXY: return "Xilyantiphor";
+				case GalaxyType.VIDON_GALAXY: return "Vidon";
+				case GalaxyType.RYKTAR_GALAXY: return "Ryktar";
+				default: return string.Empty;
+			}
+		}
+
 		#endregion
 
 		#region --------------- USER INTERFACE ---------------

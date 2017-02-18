@@ -11,7 +11,7 @@ public class RestartGameEvent : ButtonEvent {
 	public override void OnItemUp() {
 		base.OnItemUp();
 		PageManager.Instance.TurnOffPage(pageToRemove, PageType.NONE);
-		GameObject.FindObjectOfType<ShipController>().GetComponent<SpriteRenderer>().sortingOrder = 0;
+		//GameObject.FindObjectOfType<ShipController>().GetComponent<SpriteRenderer>().sortingOrder = 0;
 		SceneLoader.Instance.LoadPlaySceneInstant();
 	}
 }

@@ -6,6 +6,7 @@ using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using GooglePlayGames.BasicApi.Events;
 using DebugServices;
+using Util;
 
 public class DataStorage {
 
@@ -40,7 +41,7 @@ public class DataStorage {
 					string winsEventId = GPGSUtil.GalaxyLevelWinsId(galaxyType, level);
 					string starsEventId = GPGSUtil.GalaxyLevelStarsId(galaxyType, level);
 
-					loadJobs += 3;
+					if (USER_ID != string.Empty) loadJobs += 3;
 
 					FetchEventForLocalStorage(attemptsEventId);
 					FetchEventForLocalStorage(winsEventId);
@@ -48,7 +49,38 @@ public class DataStorage {
 				}
 			}
 
-			loadJobs += 5;
+			//loop through ships
+			for (int ship = 0; ship < 8; ship++) {
+				ShipType shipType = (ShipType)ship;
+				string shipEventId = GPGSUtil.ShipId(shipType);
+				string shipLivesId = PrefsUtil.ShipLivesId(shipType);
+				string playerShipId = PrefsUtil.MiscId(MiscType.PLAYER_SHIP_TYPE);
+
+				FetchEventForLocalStorage(shipEventId);
+
+				//remember, this is data that is set based on the idea that this user has never used this device before
+				if (ship == 0) {
+					IncrementEvent(shipEventId, 1); //purchase ship
+					SaveLocalData(shipLivesId, 5); //give first ship full 20 lives
+				}
+				else 
+					SaveLocalData(shipLivesId, 0); //give all other ships 0 lives
+
+				//give the player a ship
+				SaveLocalData(playerShipId, 0); //0 represents the first ship
+
+				if (USER_ID != string.Empty) loadJobs++;
+			}
+
+			//loop through timestamps
+			for (int timestamp = 0; timestamp < 8; timestamp++) {
+				TimestampType timestampType = (TimestampType)timestamp;
+				string timestampId = PrefsUtil.TimestampId(timestampType);
+
+				TimeUtil.SaveDateTime(timestampId);
+			}
+
+			if (USER_ID != string.Empty) loadJobs += 5;
 
 			//leaderboard stars, resources
 			FetchLeaderboardForLocalStorage(Remnant.GPGSIds.leaderboard_stars_earned);
@@ -105,13 +137,22 @@ public class DataStorage {
 
 	public static int GetLocalData(string dataId) {
 		int ret = PlayerPrefs.GetInt(USER_ID+dataId);
-		if (debug) Debugger.Log("Retrieving data for " + GPGSUtil.GetIdDecrypted(dataId) + " => " +ret, DebugFlag.TASK);
+		if (debug) Debugger.Log("DATA STORAGE EVENT: Retrieving data for " + GPGSUtil.GetIdDecrypted(dataId) + " => " +ret, DebugFlag.TASK);
 		return ret;
 	}
 
 	public static void SaveLocalData(string dataId, int amount) {
-		if (debug) Debugger.Log("Saving data " +amount+ " to " +GPGSUtil.GetIdDecrypted(dataId), DebugFlag.TASK);
+		if (debug) Debugger.Log("DATA STORAGE EVENT: Saving data " +amount+ " to " +GPGSUtil.GetIdDecrypted(dataId), DebugFlag.TASK);
 		PlayerPrefs.SetInt(USER_ID+dataId, amount);
+	}
+
+	public static void SaveTimeData(string dataId, string data) {
+		if (debug) Debugger.Log("DATA STORAGE EVENT: Saving data " +data+ " to " +dataId, DebugFlag.TASK);
+		PlayerPrefs.SetString(USER_ID+dataId, data);
+	}
+
+	public static string GetTimeData(string dataId) {
+		return PlayerPrefs.GetString(USER_ID+dataId);
 	}
 
 	static void FetchLeaderboardForLocalStorage(string leaderboardId) {

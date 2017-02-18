@@ -2,8 +2,11 @@
 using System.Collections;
 using System;
 using Types;
+using Util;
 
 public class ProgressManager : MonoBehaviour {
+
+	const int MINUTES_TO_SHIP_RECHARGE = 5;
 
 	public delegate void UIStatTextDelegate(int amount);
 	public event UIStatTextDelegate UpdateStarsText;
@@ -38,7 +41,7 @@ public class ProgressManager : MonoBehaviour {
 			case GalaxyType.VIDON_GALAXY: return GalaxyType.ZAX_GALAXY;
 			case GalaxyType.RYKTAR_GALAXY: return GalaxyType.KYDOR_GALAXY;
 			default: 
-				return GalaxyType.HOME_GALAXY;
+				return GalaxyType.NONE;
 		}
 	}
 
@@ -52,7 +55,7 @@ public class ProgressManager : MonoBehaviour {
 			case GalaxyType.VIDON_GALAXY: return GalaxyType.KYDOR_GALAXY;
 			case GalaxyType.RYKTAR_GALAXY: return GalaxyType.MALIX_GALAXY;
 			default:
-				return GalaxyType.MALIX_GALAXY;
+				return GalaxyType.NONE;
 		}
 	}
 
@@ -72,6 +75,9 @@ public class ProgressManager : MonoBehaviour {
 
 	public bool LevelIsAvailable(GalaxyType galaxy, int level) 
 	{
+		//if galaxy does not exist
+		if (galaxy == GalaxyType.NONE) return false;
+
 		//if level is 1, return true
 		if (level == 1) return true;
 
@@ -104,29 +110,82 @@ public class ProgressManager : MonoBehaviour {
 
 	public void MarkLevelAttempted(GalaxyType galaxy, int level)
 	{
-		//Debug.Log("GALAXY "+galaxy+" LEVEL "+level+" IS BEING ATTEMPTED");
 		string dataId = GPGSUtil.GalaxyLevelAttemptsId(galaxy, level);
 		DataStorage.IncrementEvent(dataId, 1);
 	}
 
 	public void MarkLevelStars(GalaxyType galaxy, int level, int stars)
 	{
-		//Debug.Log("GALAXY "+galaxy+" LEVEL "+level+" IS EARNING " +stars+ " STARS");
 		string dataId = GPGSUtil.GalaxyLevelStarsId(galaxy, level);
 		DataStorage.IncrementEvent(dataId, (uint)stars);
 	}
 
 	public void MarkLevelWins(GalaxyType galaxy, int level)
 	{
-		//Debug.Log("GALAXY "+galaxy+" LEVEL "+level+" HAS BEEN WON");
 		string dataId = GPGSUtil.GalaxyLevelWinsId(galaxy, level);
 		DataStorage.IncrementEvent(dataId, 1);
 	}
 
 	public void MarkLevelAchievement(GalaxyType galaxy, int level) 
 	{
-		//Debug.Log("GALAXY "+galaxy+" LEVEL "+level+" HAS BEEN ACHIEVED");
 		DataStorage.IncrementLevelAchievement(galaxy, level, 1);
+	}
+
+	public void MarkShipPurchased(ShipType ship) 
+	{
+		string dataId = GPGSUtil.ShipId(ship);
+		int info = DataStorage.GetLocalData(dataId);
+		if (info < 1) {
+			DataStorage.IncrementEvent(dataId, 1);
+		}
+	}
+
+	public bool ShipWasPurchased(ShipType ship)
+	{
+		if (ship == ShipType.SHIP_01) return true;
+		string dataId = GPGSUtil.ShipId(ship);
+		if (dataId == string.Empty) return false;
+		int info = DataStorage.GetLocalData(dataId);
+		if (info == 1) return true;
+		return false;
+	}
+
+	public int ShipLives(ShipType ship) 
+	{
+		string dataId = PrefsUtil.ShipLivesId(ship);
+		if (dataId == string.Empty) return 0;
+		return DataStorage.GetLocalData(dataId);
+	}
+
+	public void SetShipLives(ShipType ship, int newLifeCount) 
+	{
+		int armor = ShipFinder.GetShip(ship).armor;
+		if (newLifeCount > armor) return;
+		if (newLifeCount < 0) newLifeCount = 0;
+		string dataId = PrefsUtil.ShipLivesId(ship);
+		if (dataId == string.Empty) return;
+		DataStorage.SaveLocalData(dataId, newLifeCount);
+	}
+
+	public int MinutesLeftToNextRecharge(ShipType ship)
+	{
+		string timestampId = PrefsUtil.ShipArmorTimestamp(ship);
+		int minutesPassed = TimeUtil.MinutesSinceDateTime(timestampId);
+		return MINUTES_TO_SHIP_RECHARGE - minutesPassed;
+	}
+
+	public int SecondsLeftToNextRecharge(ShipType ship)
+	{
+		string timestampId = PrefsUtil.ShipArmorTimestamp(ship);
+		int secondsPassed = TimeUtil.SecondsSinceDateTime(timestampId);
+		return MinutesLeftToNextRecharge(ship) * 60 - secondsPassed;
+	} 
+
+	public ShipType PlayerShip()
+	{
+		string dataId = PrefsUtil.MiscId(MiscType.PLAYER_SHIP_TYPE);
+		int ship = DataStorage.GetLocalData(dataId);
+		return (ShipType)ship;
 	}
 
 	public int GetResources() {
@@ -157,5 +216,59 @@ public class ProgressManager : MonoBehaviour {
 	void SetStars(uint amount) {
 		DataStorage.ReportLeaderboardScore(Remnant.GPGSIds.leaderboard_stars_earned, amount);
 		try { UpdateStarsText((int)amount); } catch(System.NullReferenceException e) {}
+	}
+
+	int NewShipLives(ShipType ship)
+	{
+		string timestampId = PrefsUtil.ShipArmorTimestamp(ship);
+		int minutesPassed = TimeUtil.MinutesSinceDateTime(timestampId);
+		int livesGained = minutesPassed / MINUTES_TO_SHIP_RECHARGE;
+		if (livesGained > 0) {//enough time passed and we need to reset the timestamp
+			TimeUtil.SaveDateTime(timestampId);
+		}
+		return livesGained;
+	}
+
+	/// <summary>
+	/// Invoked by Session Manager after confirming the player has been loaded in.
+	/// </summary>
+	IEnumerator ProcessTimestamps() {
+
+		//initialization when startup begins
+		Ship[] ships = new Ship[8];
+		for (int ship = 0; ship < 8; ship++) {
+			ShipType shipType = (ShipType)ship;
+			Ship s = ShipFinder.GetShip(shipType);
+			int lives = ShipLives(shipType);
+
+			if (lives < s.armor) {
+
+				if (ShipWasPurchased(shipType)) {
+					int gained = NewShipLives(shipType);
+					SetShipLives(shipType, lives + gained);
+				}
+			}
+
+			ships[ship] = s;
+		}
+
+		while (true) {
+			for (int i = 0; i < 8; i++) {
+				ShipType shipType = ships[i].shipType;
+				Ship s = ships[i];
+				int lives = ShipLives(shipType);
+
+				if (lives < s.armor) {
+
+					if (ShipWasPurchased(shipType)) {
+						int gained = NewShipLives(shipType); //polling for new ship lives by checking time stamp differences
+						if (gained > 0) {
+							SetShipLives(shipType, lives + gained);
+						}
+					}
+				}
+			}
+			yield return new WaitForSeconds(1); //refresh timestamps every 5 seconds
+		}
 	}
 }

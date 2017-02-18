@@ -122,7 +122,7 @@ namespace Util {
 			float target = 1;
 			Color curr = enviroFader.color;
 
-			while (curr.a < 0.99f) {
+			while (curr.a < 0.95f) {
 				curr.a = Mathf.Lerp(curr.a, target, 2 * Time.deltaTime);
 				enviroFader.color = curr;
 				yield return null;

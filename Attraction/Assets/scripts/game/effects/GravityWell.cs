@@ -66,6 +66,8 @@ public class GravityWell : MonoBehaviour {
 
 	void Update()
 	{
+		if (shipController.paused) return;
+		
 		distance = Vector3.Distance(player.position, transform.position);
 
 		if (shipController.state != ShipController.State.DYING) {

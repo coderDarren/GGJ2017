@@ -48,7 +48,8 @@ namespace Menu {
 		SHIP_DOCK,
 		SOCIAL,
 		ACHIEVEMENT_PROGRESS,
-		SOCIAL_LOAD
+		SOCIAL_LOAD,
+		PAUSE
 	}
 
 }

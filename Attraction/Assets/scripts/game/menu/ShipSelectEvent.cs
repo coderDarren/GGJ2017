@@ -15,5 +15,6 @@ public class ShipSelectEvent : ButtonEvent {
 
 	public override void OnItemUp() {
 		dock.SelectShip(shipType);
+		
 	}
 }

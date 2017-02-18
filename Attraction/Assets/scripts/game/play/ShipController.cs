@@ -13,13 +13,8 @@ public class ShipController : MonoBehaviour {
 	public static event ThrusterDelegate OnThrustersEngage;
 	public static event ThrusterDelegate OnThrustersDisengage;
 
-	public GameObject accelButton;
-	public GameObject decelButton;
-	public ButtonPressAccelerate bpa;
-	public ButtonPressDecelerate bpd;
-
-	public float thrustPower = 2;
-	public float thrustAccel = 0.02f;
+	public float thrustPower = 1;
+	public float thrustAccel = 0.001f;
     public float accel = 0.01f;
     public float coast = 1;
     public ExplosionParticles explosion;
@@ -39,17 +34,20 @@ public class ShipController : MonoBehaviour {
     float vel;
     float thrust;
 
+    Ship ship;
+
+    public bool paused { get; private set; }
+
     void Start() 
 	{
 		startPos.position = this.transform.position;
 		initialRot = this.transform.rotation;
 		startTime = Time.time;
 		state = State.WAIT;
-
-		accelButton = GameObject.FindGameObjectWithTag("AccelButton");
-		decelButton = GameObject.FindGameObjectWithTag("DecelButton");
-		bpa = accelButton.GetComponent<ButtonPressAccelerate>();
-		bpd = decelButton.GetComponent<ButtonPressDecelerate>();
+		ship = ShipFinder.GetShip(ProgressManager.Instance.PlayerShip());
+		thrustPower = ship.power;
+		thrustAccel = ship.thrust;
+		accel = ship.acceleration;
 	}
 
 	/// <summary>
@@ -58,13 +56,6 @@ public class ShipController : MonoBehaviour {
 	/// </summary>
 	IEnumerator WaitToLaunch()
 	{
-		TutorialManager.Instance.StartTutorial(TutorialType.HOW_TO_PLAY);
-		int status = TutorialManager.Instance.GetStatus(TutorialType.HOW_TO_PLAY);
-		while (status == 0) {
-			status = TutorialManager.Instance.GetStatus(TutorialType.HOW_TO_PLAY);
-			yield return null;
-		}
-
 		int countdown = 3;
 		while (countdown >= 0) {
 			OnCountdown(countdown);
@@ -79,6 +70,10 @@ public class ShipController : MonoBehaviour {
     	if (lives == 0)
     		return;
 
+    	if (paused) {
+    		return;
+    	}
+
         switch (state) {
 			case State.WAIT: Wait(); break;
         	case State.ACCEL: Accelerate(); break;
@@ -90,20 +85,6 @@ public class ShipController : MonoBehaviour {
         }
 
         if ((state == State.ACCEL || state == State.DECCEL || state == State.THRUST) && lives > 0) {
-
-        	//if (bpa.buttonPressed) {
-        	//	if (state != State.THRUST) {
-	        //		state = State.THRUST;
-	        //		OnThrustersEngage();
-	        //	}
-        	//}
-
-        	//if (bpd.buttonPressed) {
-        	//	if (state == State.THRUST) {
-	        //		state = State.DECCEL;
-	        //		OnThrustersDisengage();
-	        //	}
-        	//}
 
 	        if (Input.GetKey(KeyCode.Mouse0)) {
 	        	if (state != State.THRUST) {
@@ -171,6 +152,7 @@ public class ShipController : MonoBehaviour {
 	{
 		OnThrustersDisengage();
 		lives --;
+		ProgressManager.Instance.SetShipLives(ship.shipType, ship.lives - 1);
 		if (lives >= 1) {
 			OnLivesChanged(lives);
 			ReturnToBeginning();
@@ -252,4 +234,12 @@ public class ShipController : MonoBehaviour {
 		LevelWinPage winPage = GameObject.FindObjectOfType<LevelWinPage>();
 		winPage.ConfigurePage(LevelLoader.Instance.targetInfo.galaxy, LevelLoader.Instance.targetInfo.level, lives);
 	}
+
+	public void Pause() {
+    	paused = true;
+    }
+
+    public void Unpause() {
+    	paused = false;
+    }
 }

@@ -2,16 +2,23 @@
 using System.Collections;
 using UnityEngine.UI;
 using Types;
+using Util;
 
 public class LevelWinPage : MonoBehaviour {
 
 	public Image star1, star2, star3;
-	public Text storyText;
+	public Text galaxyName;
+	public Text lvlText;
+	public NextLevelEvent nextEvent;
+	public NextLevelEvent prevEvent;
 
 	int totalStars;
 
 	public void ConfigurePage(GalaxyType galaxy, int level, int lives)
 	{
+		galaxyName.text = Utility.GalaxyToString(galaxy);
+		lvlText.text = "LVL " +level.ToString();
+
 		int sessionStars = lives >= 3 ? 3 : lives;
 		int currStars = ProgressManager.Instance.GetLevelStars(galaxy, level);
 
@@ -31,11 +38,14 @@ public class LevelWinPage : MonoBehaviour {
 		
 		string story = StoryManager.Instance.GetStory(galaxy, level);
 		if (story != null) {
-			storyText.text = story;
+			//storyText.text = story;
 		}
 
 		totalStars = sessionStars;
 		StartCoroutine("WaitToFill");
+
+		nextEvent.ConfigureButton();
+		prevEvent.ConfigureButton();
 
 		if (level == 5)
 		{
