@@ -49,7 +49,8 @@ namespace Menu {
 		SOCIAL,
 		ACHIEVEMENT_PROGRESS,
 		SOCIAL_LOAD,
-		PAUSE
+		PAUSE,
+		SHIP_STORE
 	}
 
 }

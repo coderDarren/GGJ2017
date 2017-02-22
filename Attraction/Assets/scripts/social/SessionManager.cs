@@ -60,6 +60,7 @@ public class SessionManager : MonoBehaviour {
 			userId = string.Empty;
 		}
 		DataStorage.LoadUser(userId, false);
+		//ProgressManager.Instance.AddResources(125000);
 		StartCoroutine("WaitToStart");
 	}
 

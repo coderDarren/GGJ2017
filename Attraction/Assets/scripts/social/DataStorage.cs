@@ -88,6 +88,7 @@ public class DataStorage {
 			//event stars, resources
 			FetchEventForLocalStorage(Remnant.GPGSIds.event_stars_earned);
 			FetchEventForLocalStorage(Remnant.GPGSIds.event_resources_earned);
+			FetchEventForLocalStorage(Remnant.GPGSIds.event_resources_spent);
 			//event ships
 			FetchEventForLocalStorage(Remnant.GPGSIds.event_ships_purchased);
 

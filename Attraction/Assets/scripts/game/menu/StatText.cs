@@ -22,7 +22,7 @@ public class StatText : MonoBehaviour {
 
 	void Start() {
 		t = GetComponent<Text>();
-		current = stat == StatType.RESOURCES ? ProgressManager.Instance.GetResources() : ProgressManager.Instance.GetStars();
+		current = stat == StatType.RESOURCES ? ProgressManager.Instance.GetTotalResources() : ProgressManager.Instance.GetStars();
 		SetText();
 	}
 
@@ -70,6 +70,10 @@ public class StatText : MonoBehaviour {
 	}
 
 	void SetText() {
+
+		if (!t) {
+			t = GetComponent<Text>();
+		}
 
 		if (!useFormatting) {
 			t.text = prefix + string.Format("{0:n0}", current) + suffix;

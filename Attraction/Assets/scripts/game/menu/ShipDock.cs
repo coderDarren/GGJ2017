@@ -2,15 +2,19 @@
 using System.Collections;
 using UnityEngine.UI;
 using Types;
+using Menu;
 
 public class ShipDock : MonoBehaviour {
 
 	public float rotationSpeed = 5;
+	public ShipType activeShip { get; private set; }
 
 	RectTransform rect;
 
 	void Start() {
 		rect = GetComponent<RectTransform>();
+		ShipType playerShip = ProgressManager.Instance.PlayerShip();
+		SelectShip(playerShip);
 	}
 
 	IEnumerator RotateShipDock(float deg) {
@@ -24,6 +28,10 @@ public class ShipDock : MonoBehaviour {
 	}
 
 	public void SelectShip(ShipType ship) {
+		activeShip = ship;
+		ProgressManager.Instance.SetPlayerShip(activeShip);
+		PageManager.Instance.LoadPage(PageType.SHIP_STORE);
+
 		StopCoroutine("RotateShipDock");
 		switch (ship) {
 			case ShipType.SHIP_01: StartCoroutine("RotateShipDock", 0); break;

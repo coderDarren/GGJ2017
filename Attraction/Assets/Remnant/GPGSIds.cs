@@ -46,7 +46,7 @@ public static class GPGSIds
         public const string event_galaxy_04_level_01_wins = "CgkI6Ya_9ZgaEAIQPQ"; // <GPGSID>
         public const string achievement_experienced_pioneer = "CgkI6Ya_9ZgaEAIQWQ"; // <GPGSID>
         public const string event_galaxy_01_level_02_stars = "CgkI6Ya_9ZgaEAIQYg"; // <GPGSID>
-        public const string event_galaxy_07_level_01_wins = "CgkI6Ya_9ZgaEAIQTA"; // <GPGSID>
+        public const string event_resources_spent = "CgkI6Ya_9ZgaEAIQlQE"; // <GPGSID>
         public const string event_galaxy_05_level_02_attempts = "CgkI6Ya_9ZgaEAIQGw"; // <GPGSID>
         public const string achievement_multiplanetary_linguist = "CgkI6Ya_9ZgaEAIQWw"; // <GPGSID>
         public const string event_galaxy_02_level_04_stars = "CgkI6Ya_9ZgaEAIQaQ"; // <GPGSID>
@@ -136,6 +136,7 @@ public static class GPGSIds
         public const string achievement_trained_navigator = "CgkI6Ya_9ZgaEAIQWA"; // <GPGSID>
         public const string event_galaxy_05_level_05_attempts = "CgkI6Ya_9ZgaEAIQHg"; // <GPGSID>
         public const string event_galaxy_04_level_02_attempts = "CgkI6Ya_9ZgaEAIQFg"; // <GPGSID>
+        public const string event_galaxy_07_level_01_wins = "CgkI6Ya_9ZgaEAIQTA"; // <GPGSID>
         public const string event_galaxy_06_level_04_stars = "CgkI6Ya_9ZgaEAIQfQ"; // <GPGSID>
         public const string event_ship_03_purchased = "CgkI6Ya_9ZgaEAIQjgE"; // <GPGSID>
         public const string event_galaxy_05_level_04_stars = "CgkI6Ya_9ZgaEAIQeA"; // <GPGSID>
@@ -143,7 +144,6 @@ public static class GPGSIds
         public const string event_galaxy_03_level_05_wins = "CgkI6Ya_9ZgaEAIQPA"; // <GPGSID>
         public const string event_galaxy_01_level_03_wins = "CgkI6Ya_9ZgaEAIQMA"; // <GPGSID>
         public const string event_galaxy_05_level_01_stars = "CgkI6Ya_9ZgaEAIQdQ"; // <GPGSID>
-        public const string event_in_game_currency = "CgkI6Ya_9ZgaEAIQAw"; // <GPGSID>
         public const string event_galaxy_06_level_05_wins = "CgkI6Ya_9ZgaEAIQSw"; // <GPGSID>
         public const string event_galaxy_04_level_03_wins = "CgkI6Ya_9ZgaEAIQPw"; // <GPGSID>
         public const string event_galaxy_04_level_04_attempts = "CgkI6Ya_9ZgaEAIQGA"; // <GPGSID>

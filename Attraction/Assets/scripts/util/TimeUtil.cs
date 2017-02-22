@@ -36,7 +36,9 @@ namespace Util {
 
 		public static int MinutesSinceDateTime(string dataId) {
 			DateTime compareDate = GetDateTime(dataId);
-			return (Now - compareDate).Minutes;		
+			return (Now - compareDate).Minutes + 
+				   (Now - compareDate).Hours * 60 + 
+				   (Now - compareDate).Days * 60 * 24;		
 		}
 
 		public static int HoursSinceDateTime(string dataId) {

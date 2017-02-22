@@ -45,9 +45,11 @@ public class ShipController : MonoBehaviour {
 		startTime = Time.time;
 		state = State.WAIT;
 		ship = ShipFinder.GetShip(ProgressManager.Instance.PlayerShip());
-		thrustPower = ship.power;
-		thrustAccel = ship.thrust;
+		coast = ship.coast;
+		thrustPower = ship.thrustPower;
+		thrustAccel = ship.thrustAccel;
 		accel = ship.acceleration;
+		GetComponent<SpriteRenderer>().sprite = ship.sprite;
 	}
 
 	/// <summary>

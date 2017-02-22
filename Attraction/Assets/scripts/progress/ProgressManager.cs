@@ -7,6 +7,7 @@ using Util;
 public class ProgressManager : MonoBehaviour {
 
 	const int MINUTES_TO_SHIP_RECHARGE = 5;
+	int leftOverMinutes = 0;
 
 	public delegate void UIStatTextDelegate(int amount);
 	public event UIStatTextDelegate UpdateStarsText;
@@ -160,7 +161,7 @@ public class ProgressManager : MonoBehaviour {
 	public void SetShipLives(ShipType ship, int newLifeCount) 
 	{
 		int armor = ShipFinder.GetShip(ship).armor;
-		if (newLifeCount > armor) return;
+		if (newLifeCount > armor) newLifeCount = armor;
 		if (newLifeCount < 0) newLifeCount = 0;
 		string dataId = PrefsUtil.ShipLivesId(ship);
 		if (dataId == string.Empty) return;
@@ -170,16 +171,26 @@ public class ProgressManager : MonoBehaviour {
 	public int MinutesLeftToNextRecharge(ShipType ship)
 	{
 		string timestampId = PrefsUtil.ShipArmorTimestamp(ship);
-		int minutesPassed = TimeUtil.MinutesSinceDateTime(timestampId);
-		return MINUTES_TO_SHIP_RECHARGE - minutesPassed;
+		int minutesPassed = TimeUtil.MinutesSinceDateTime(timestampId) ;
+		return (MINUTES_TO_SHIP_RECHARGE - 1) - minutesPassed;
 	}
 
 	public int SecondsLeftToNextRecharge(ShipType ship)
 	{
 		string timestampId = PrefsUtil.ShipArmorTimestamp(ship);
 		int secondsPassed = TimeUtil.SecondsSinceDateTime(timestampId);
-		return MinutesLeftToNextRecharge(ship) * 60 - secondsPassed;
+		return 59 - secondsPassed;
 	} 
+
+	public void SetPlayerShip(ShipType ship) 
+	{
+		Ship shipData = ShipFinder.GetShip(ship);
+		if (!shipData.purchased) return;
+
+		string dataId = PrefsUtil.MiscId(MiscType.PLAYER_SHIP_TYPE);
+		int shipId = (int)ship;
+		DataStorage.SaveLocalData(dataId, shipId);
+	}
 
 	public ShipType PlayerShip()
 	{
@@ -192,8 +203,24 @@ public class ProgressManager : MonoBehaviour {
 		return DataStorage.GetLocalData(Remnant.GPGSIds.leaderboard_resources_earned);
 	}
 
+	public int GetResourcesSpent() {
+		return DataStorage.GetLocalData(Remnant.GPGSIds.event_resources_spent);
+	}
+
 	public int GetStars() {
 		return DataStorage.GetLocalData(Remnant.GPGSIds.leaderboard_stars_earned);
+	}
+
+	public int GetTotalResources() {
+		return GetResources() - GetResourcesSpent();
+	}
+
+	public void AddResourcesSpent(int amount) {
+		DataStorage.IncrementEvent(Remnant.GPGSIds.event_resources_spent, (uint)amount);
+	}
+
+	public void UpdateGlobalResourceNotification(int amount) {
+		try { UpdateResourcesText(amount); } catch(System.NullReferenceException e) {}
 	}
 
 	public void AddResources(uint amount) {
@@ -204,7 +231,7 @@ public class ProgressManager : MonoBehaviour {
 
 	void SetResources(uint amount) {
 		DataStorage.ReportLeaderboardScore(Remnant.GPGSIds.leaderboard_resources_earned, amount);
-		try { UpdateResourcesText((int)amount); } catch(System.NullReferenceException e) {}
+		UpdateGlobalResourceNotification(GetTotalResources());
 	}
 
 	public void AddStars(uint amount) {
@@ -223,6 +250,7 @@ public class ProgressManager : MonoBehaviour {
 		string timestampId = PrefsUtil.ShipArmorTimestamp(ship);
 		int minutesPassed = TimeUtil.MinutesSinceDateTime(timestampId);
 		int livesGained = minutesPassed / MINUTES_TO_SHIP_RECHARGE;
+		leftOverMinutes = minutesPassed % MINUTES_TO_SHIP_RECHARGE;
 		if (livesGained > 0) {//enough time passed and we need to reset the timestamp
 			TimeUtil.SaveDateTime(timestampId);
 		}

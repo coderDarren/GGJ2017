@@ -6,10 +6,12 @@ using Types;
 public class ShipArmorBar : MonoBehaviour {
 
 	public Image bar;
+	public Image icon;
 	public Text rechargeText;
 	public Text percentageText;
 	public ShipType shipType;
 	public bool forActiveShip;
+	public bool useShipIcon = true;
 	public Color lowArmor, mediumArmor, healthyArmor;
 
 	ProgressManager progress;
@@ -38,25 +40,39 @@ public class ShipArmorBar : MonoBehaviour {
 		int lives = ship.lives;
 		int armor = ship.armor;
 
+		if (useShipIcon) {
+			icon.sprite = ship.sprite;
+		}
+
 		while (true) {
 			bar.fillAmount = ship.lives / (float)armor;
 			if (bar.fillAmount == 0) bar.fillAmount = 0.05f;
 			SetBarColor();
 
-			if (rechargeText) {
-				int minutes = progress.MinutesLeftToNextRecharge(shipType);
-				int seconds = progress.SecondsLeftToNextRecharge(shipType);
-				if (seconds >= 60)
-					rechargeText.text = minutes.ToString() + "m";
-				else if (seconds >= 10)
-					rechargeText.text = "0:"+seconds.ToString();
-				else 
-					rechargeText.text = "0:0"+seconds.ToString();
-			}
-			if (percentageText) {
-				percentageText.text = ((ship.lives / (float)armor) * 100).ToString() + "%";
-			}
+			if (ship.purchased) {
 
+				if (ship.lives == armor) {
+					rechargeText.text = "FULL";
+				}
+
+				if (rechargeText && ship.lives < armor) {
+					int minutes = progress.MinutesLeftToNextRecharge(shipType);
+					int seconds = progress.SecondsLeftToNextRecharge(shipType);
+
+					seconds = Mathf.Clamp(seconds, 0, 59);
+					minutes = Mathf.Clamp(minutes, 0, 59);
+
+					if (seconds >= 10)
+						rechargeText.text = minutes.ToString()+":"+seconds.ToString();
+					else 
+						rechargeText.text = minutes.ToString()+":0"+seconds.ToString();
+				}
+				if (percentageText) {
+					int percentage = (int)(((ship.lives / (float)armor) * 100));
+					percentageText.text = percentage.ToString() + "%";
+				}
+			}
+			
 			yield return new WaitForSeconds(1);
 		}
 	}

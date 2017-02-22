@@ -69,6 +69,16 @@ namespace Types {
 		SHIP_08_ARMOR
 	}
 
+	public enum PurchaseType {
+		SINGLE_LIFE,
+		FULL_LIFE_REFILL,
+		SHIP,
+		IAP_RESOURCE_500,
+		IAP_RESOURCE_1500,
+		IAP_RESOURCE_4500,
+		IAP_RESOURCE_10000
+	}
+
 	public enum MiscType {
 		PLAYER_SHIP_TYPE
 	}

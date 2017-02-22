@@ -14,7 +14,7 @@ public class ShipSelectEvent : ButtonEvent {
 	}
 
 	public override void OnItemUp() {
+		PageManager.Instance.TurnOffPage(PageType.SHIP_STORE, PageType.NONE);
 		dock.SelectShip(shipType);
-		
 	}
 }
