@@ -15,6 +15,11 @@ public class SceneLoadEvent : ButtonEvent {
 	{
 		base.OnItemUp();
 
+		if (sceneToLoad == GameScene.LEVELS) {
+			if (!TutorialManager.Instance.TutorialIsComplete(TutorialType.BUY_SHIP) ||
+				!TutorialManager.Instance.TutorialIsComplete(TutorialType.SHIP_ARMOR)) return;
+		}
+
 		SceneLoader.Instance.LoadScene(sceneToLoad);	
 	}
 

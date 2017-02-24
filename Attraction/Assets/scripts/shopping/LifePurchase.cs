@@ -33,7 +33,11 @@ public class LifePurchase : PurchaseItem {
 
 	void ConfigurePurchaseConstraints() {
 
-		if (!ship.purchased) {
+		if (ship == null)
+			Destroy(gameObject);
+
+		if (!ship.purchased || 
+			shipType != ProgressManager.Instance.PlayerShip()) {
 			interactable = false;
 			canvas.alpha = 0;
 			//gameObject.SetActive(false);

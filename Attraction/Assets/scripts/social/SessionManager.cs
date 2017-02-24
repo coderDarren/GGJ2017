@@ -59,8 +59,8 @@ public class SessionManager : MonoBehaviour {
 			userName = "Guest";
 			userId = string.Empty;
 		}
-		DataStorage.LoadUser(userId, false);
-		//ProgressManager.Instance.AddResources(125000);
+		DataStorage.LoadUser(userId, true);
+		ProgressManager.Instance.AddResources(125000);
 		StartCoroutine("WaitToStart");
 	}
 

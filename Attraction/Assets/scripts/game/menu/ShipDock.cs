@@ -11,10 +11,13 @@ public class ShipDock : MonoBehaviour {
 
 	RectTransform rect;
 
-	void Start() {
+	void Awake() {
 		rect = GetComponent<RectTransform>();
 		ShipType playerShip = ProgressManager.Instance.PlayerShip();
-		SelectShip(playerShip);
+		if (playerShip == ShipType.SHIP_NONE)
+			SelectShip(ShipType.SHIP_01);
+		else
+			SelectShip(playerShip);
 	}
 
 	IEnumerator RotateShipDock(float deg) {
@@ -29,7 +32,7 @@ public class ShipDock : MonoBehaviour {
 
 	public void SelectShip(ShipType ship) {
 		activeShip = ship;
-		ProgressManager.Instance.SetPlayerShip(activeShip);
+		//ProgressManager.Instance.SetPlayerShip(activeShip);
 		PageManager.Instance.LoadPage(PageType.SHIP_STORE);
 
 		StopCoroutine("RotateShipDock");

@@ -8,9 +8,6 @@ public class TutorialManager : MonoBehaviour {
 
 	public static TutorialManager Instance;
 
-	const string INITIALIZED = "TUTORIALS_INITIALIZED";
-
-
 	void Awake()
 	{
 		if (Instance != null)
@@ -23,56 +20,34 @@ public class TutorialManager : MonoBehaviour {
 		}
 	}
 
-
-	void InitializeTutorials()
+	public bool TutorialIsComplete(TutorialType tutorial)
 	{
-		Array tutorials = Enum.GetValues(typeof(TutorialType));
-		foreach (TutorialType tutorial in tutorials)
-		{
-			PlayerPrefs.SetInt(SessionManager.Instance.userId + tutorial.ToString(), 0);
-		}
-		PlayerPrefs.SetInt(SessionManager.Instance.userId + INITIALIZED, 1);
+		string dataId = GPGSUtil.TutorialId(tutorial);
+		int info = DataStorage.GetLocalData(dataId);
+		if (info == 1) return true;
+		return false;
 	}
 
-	public void CheckResetTutorials()
+	public void TryLaunchTutorial(TutorialType tutorial)
 	{
-		int init = GetStatus(INITIALIZED);
-		if (init == 1)
-			return;
-
-		InitializeTutorials();
-	}
-
-	public void ResetTutorials()
-	{
-		InitializeTutorials();
-	}
-
-	public int GetStatus(string pref)
-	{
-		return PlayerPrefs.GetInt(SessionManager.Instance.userId + pref);
-	}
-
-	public int GetStatus(TutorialType tutorial)
-	{
-		return PlayerPrefs.GetInt(SessionManager.Instance.userId + tutorial.ToString());
-	}
-
-	public void StartTutorial(TutorialType tutorial)
-	{
-		int status = GetStatus(tutorial);
-		if (status == 1)
+		if (TutorialIsComplete(tutorial))
 			return;
 
 		switch (tutorial)
 		{
-			case TutorialType.GALAXIES: PageManager.Instance.LoadPage(PageType.TUTORIALS_GALAXIES); break;
-			case TutorialType.HOW_TO_PLAY: PageManager.Instance.LoadPage(PageType.TUTORIALS_HOW_TO_PLAY); break;
+			case TutorialType.BUY_SHIP: PageManager.Instance.LoadPage(PageType.TUTORIALS_BUY_SHIP); break;
+			case TutorialType.BUY_SHIP2: /*PageManager.Instance.LoadPage(PageType.TUTORIALS_BUY_SHIP_02);*/ break;
+			case TutorialType.SHIP_ARMOR: PageManager.Instance.LoadPage(PageType.TUTORIALS_SHIP_ARMOR); break;
+			case TutorialType.THRUST_SHIP: PageManager.Instance.LoadPage(PageType.TUTORIALS_THRUST_SHIP); break;
 		}
 	}
 
-	public void CompleteTutorial(TutorialType tutorial)
+	public void MarkTutorialComplete(TutorialType tutorial)
 	{
-		PlayerPrefs.SetInt(SessionManager.Instance.userId + tutorial.ToString(), 1);
+		if (TutorialIsComplete(tutorial)) return;
+
+		string dataId = GPGSUtil.TutorialId(tutorial);
+		int info = DataStorage.GetLocalData(dataId);
+		DataStorage.IncrementEvent(dataId, 1);
 	}
 }

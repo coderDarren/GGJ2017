@@ -12,6 +12,8 @@ public class ShipController : MonoBehaviour {
 	public delegate void ThrusterDelegate();
 	public static event ThrusterDelegate OnThrustersEngage;
 	public static event ThrusterDelegate OnThrustersDisengage;
+	public delegate void LifeFlashDelegate();
+	public static event LifeFlashDelegate OnFlashLifeIcon;
 
 	public float thrustPower = 1;
 	public float thrustAccel = 0.001f;
@@ -58,6 +60,11 @@ public class ShipController : MonoBehaviour {
 	/// </summary>
 	IEnumerator WaitToLaunch()
 	{
+		TutorialManager.Instance.TryLaunchTutorial(TutorialType.THRUST_SHIP);
+		while (!TutorialManager.Instance.TutorialIsComplete(TutorialType.THRUST_SHIP)) {
+			yield return null;
+		}
+		
 		int countdown = 3;
 		while (countdown >= 0) {
 			OnCountdown(countdown);
@@ -157,6 +164,7 @@ public class ShipController : MonoBehaviour {
 		ProgressManager.Instance.SetShipLives(ship.shipType, ship.lives - 1);
 		if (lives >= 1) {
 			OnLivesChanged(lives);
+			OnFlashLifeIcon();
 			ReturnToBeginning();
 		}
 		else if (lives == 0) {

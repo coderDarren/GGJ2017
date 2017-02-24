@@ -37,6 +37,10 @@ public class ShipArmorBar : MonoBehaviour {
 		if (forActiveShip)
 			shipType = progress.PlayerShip();
 		Ship ship = ShipFinder.GetShip(shipType);
+		if (ship == null) {
+			Destroy(gameObject);
+			StopCoroutine("UpdateBar");
+		}
 		int lives = ship.lives;
 		int armor = ship.armor;
 

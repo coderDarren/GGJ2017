@@ -12,6 +12,13 @@ namespace Menu {
 	[RequireComponent(typeof(RectTransform))]
 	public class ButtonEvent : MonoBehaviour, IDragHandler, IPointerUpHandler, IPointerDownHandler, IPointerEnterHandler, IPointerExitHandler {
 
+		//--------------- EVENTS ---------------
+		//Note these events are not static.
+		//A class may subscribe to a button's reference event.
+		public delegate void ButtonEventDelegate();
+		public event ButtonEventDelegate OnButtonUp;
+		public event ButtonEventDelegate OnButtonDown;
+
 		//--------------- OPTIONS ---------------
 
 		[System.Serializable]
@@ -506,6 +513,10 @@ namespace Menu {
 			if (!interactable) //interaction is not enabled, so we do not continue
 				return;
 
+			try {
+				//event for foreign classes to conduct some action to this button's object reference
+				OnButtonDown();
+			} catch (System.NullReferenceException e) {}
 			OnItemDown();
 		}
 
@@ -514,6 +525,10 @@ namespace Menu {
 			if (!interactable) //interaction is not enabled, so we do not continue
 				return;
 
+			try {
+				//event for foreign classes to conduct some action to this button's object reference
+				OnButtonUp();
+			} catch (System.NullReferenceException e) {}
 			OnItemUp();
 		}
 

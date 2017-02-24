@@ -40,14 +40,17 @@ namespace Types {
 
 	public enum TutorialType
 	{
-		GALAXIES,
-		HOW_TO_PLAY,
-		CONTROLS_THRUST_SHIP,
-		GRAVITY_WELLS,
-		ANTIGRAVITY_WELLS
+		BUY_SHIP,
+		BUY_SHIP2,
+		SHIP_ARMOR,
+		HEAL_SHIP,
+		THRUST_SHIP,
+		COMPLETE_LEVEL,
+		COLLECT_RESOURCES
 	}
 
 	public enum ShipType {
+		SHIP_NONE,
 		SHIP_01,
 		SHIP_02,
 		SHIP_03,

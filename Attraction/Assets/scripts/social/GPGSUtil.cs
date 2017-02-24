@@ -343,4 +343,17 @@ public class GPGSUtil {
 		}
 		return string.Empty;
 	}
+
+	public static string TutorialId(TutorialType tutorial) {
+		switch (tutorial) {
+			case TutorialType.BUY_SHIP: return GPGSIds.event_tutorial_buy_ship;
+			case TutorialType.BUY_SHIP2: return GPGSIds.event_tutorial_buy_ship_02;
+			case TutorialType.SHIP_ARMOR: return GPGSIds.event_tutorial_ship_armor;
+			case TutorialType.HEAL_SHIP: return GPGSIds.event_tutorial_heal_ship;
+			case TutorialType.THRUST_SHIP: return GPGSIds.event_tutorial_thrust_ship;
+			case TutorialType.COMPLETE_LEVEL: return GPGSIds.event_tutorial_complete_level;
+			case TutorialType.COLLECT_RESOURCES: return GPGSIds.event_tutorial_collect_resources;
+		}
+		return string.Empty;
+	}
 }

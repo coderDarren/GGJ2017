@@ -143,7 +143,6 @@ public class ProgressManager : MonoBehaviour {
 
 	public bool ShipWasPurchased(ShipType ship)
 	{
-		if (ship == ShipType.SHIP_01) return true;
 		string dataId = GPGSUtil.ShipId(ship);
 		if (dataId == string.Empty) return false;
 		int info = DataStorage.GetLocalData(dataId);
@@ -197,6 +196,12 @@ public class ProgressManager : MonoBehaviour {
 		string dataId = PrefsUtil.MiscId(MiscType.PLAYER_SHIP_TYPE);
 		int ship = DataStorage.GetLocalData(dataId);
 		return (ShipType)ship;
+	}
+
+	public void SaveShipArmorTimestamp(ShipType ship)
+	{
+		string timestampId = PrefsUtil.ShipArmorTimestamp(ship);
+		TimeUtil.SaveDateTime(timestampId);
 	}
 
 	public int GetResources() {
@@ -264,7 +269,7 @@ public class ProgressManager : MonoBehaviour {
 
 		//initialization when startup begins
 		Ship[] ships = new Ship[8];
-		for (int ship = 0; ship < 8; ship++) {
+		for (int ship = 1; ship < 9; ship++) {
 			ShipType shipType = (ShipType)ship;
 			Ship s = ShipFinder.GetShip(shipType);
 			int lives = ShipLives(shipType);
@@ -277,13 +282,13 @@ public class ProgressManager : MonoBehaviour {
 				}
 			}
 
-			ships[ship] = s;
+			ships[ship - 1] = s;
 		}
 
 		while (true) {
-			for (int i = 0; i < 8; i++) {
-				ShipType shipType = ships[i].shipType;
-				Ship s = ships[i];
+			for (int i = 1; i < 9; i++) {
+				ShipType shipType = ships[i-1].shipType;
+				Ship s = ships[i-1];
 				int lives = ShipLives(shipType);
 
 				if (lives < s.armor) {

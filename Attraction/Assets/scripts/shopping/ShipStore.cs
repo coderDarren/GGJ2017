@@ -23,7 +23,7 @@ public class ShipStore : MonoBehaviour {
 	ShipDock dock;
 
 
-	void Awake() {
+	void Start() {
 		dock = GameObject.FindObjectOfType<ShipDock>();
 		activeShip = dock.activeShip;
 		armorBar.shipType = activeShip;
@@ -41,10 +41,10 @@ public class ShipStore : MonoBehaviour {
 		float selectedThrustAccel = BarValue(0.0005f, 0.005f, ship.thrustAccel);
 		float selectedDurability = BarValue(2, 30, ship.armor);
 
-		float playerCoastVelocity = BarValue(0.1f, 5f, playerShip.coast);
-		float playerMaxVelocity = BarValue(1, 6f, playerShip.thrustPower + playerShip.coast);
-		float playerThrustAccel = BarValue(0.0005f, 0.005f, playerShip.thrustAccel);
-		float playerDurability = BarValue(2, 30, playerShip.armor);
+		float playerCoastVelocity = playerShip != null ? BarValue(0.1f, 5f, playerShip.coast) : 0;
+		float playerMaxVelocity = playerShip != null ? BarValue(1, 6f, playerShip.thrustPower + playerShip.coast) : 0;
+		float playerThrustAccel = playerShip != null ? BarValue(0.0005f, 0.005f, playerShip.thrustAccel) : 0;
+		float playerDurability = playerShip != null ? BarValue(2, 30, playerShip.armor) : 0;
 
 		//COAST VELOCITY BARS
 

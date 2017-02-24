@@ -10,8 +10,11 @@ public class ShipPurchase : PurchaseItem {
 	ShipDock dock;
 	int cost;
 
+	ProgressManager progress;
+
 	void Start() {
 		InitButton();
+		progress = ProgressManager.Instance;
 
 		dock = GameObject.FindObjectOfType<ShipDock>();
 		shipType = dock.activeShip;
@@ -21,11 +24,11 @@ public class ShipPurchase : PurchaseItem {
 		if (ship.purchased) {
 			interactable = false;
 			canvas.alpha = 0;
-			//gameObject.SetActive(false);
+			gameObject.SetActive(false);
 			return;
 		}
 
-		int playerResources = ProgressManager.Instance.GetTotalResources();
+		int playerResources = progress.GetTotalResources();
 		if (playerResources < cost) {
 			interactable = false;
 			canvas.alpha = disabledAlpha;
@@ -35,9 +38,16 @@ public class ShipPurchase : PurchaseItem {
 	}
 
 	public override void BuyShip() {
-		ProgressManager.Instance.MarkShipPurchased(shipType);
-		ProgressManager.Instance.SetPlayerShip(shipType);
-		ProgressManager.Instance.AddResourcesSpent(cost);
+		progress.MarkShipPurchased(shipType);
+		progress.AddResourcesSpent(cost);
+		progress.SaveShipArmorTimestamp(shipType);
+		progress.SetShipLives(shipType, ship.armor / 4);
+
+		if (progress.PlayerShip() == ShipType.SHIP_NONE) {
+			progress.SetPlayerShip(shipType);
+			TutorialManager.Instance.MarkTutorialComplete(TutorialType.BUY_SHIP);
+		}
+
 		PageManager.Instance.TurnOffPage(PageType.SHIP_STORE, PageType.NONE);
 		PageManager.Instance.LoadPage(PageType.SHIP_STORE);
 	}

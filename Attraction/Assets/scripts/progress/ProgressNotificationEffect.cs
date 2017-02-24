@@ -13,6 +13,7 @@ public class ProgressNotificationEffect : MonoBehaviour {
 	public float rippleFrequency; 	//how long between each ripple sequence
 	public float expandRate;
 	public float fadeSpeed;
+	public float size = 1;
 
 	public GalaxyType galaxy;
 	public int level;
@@ -74,6 +75,7 @@ public class ProgressNotificationEffect : MonoBehaviour {
 			RectTransform rect = obj.GetComponent<RectTransform>();
 			rect.SetParent(parent);
 			rect.localPosition = Vector3.zero;
+			rect.localScale = Vector3.one * size;
 			StartCoroutine("UpdateRipple", rect);
 			i++;
 			yield return new WaitForSeconds(rippleLength);

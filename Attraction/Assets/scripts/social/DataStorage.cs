@@ -50,27 +50,27 @@ public class DataStorage {
 			}
 
 			//loop through ships
-			for (int ship = 0; ship < 8; ship++) {
+			for (int ship = 1; ship < 9; ship++) {
 				ShipType shipType = (ShipType)ship;
 				string shipEventId = GPGSUtil.ShipId(shipType);
 				string shipLivesId = PrefsUtil.ShipLivesId(shipType);
-				string playerShipId = PrefsUtil.MiscId(MiscType.PLAYER_SHIP_TYPE);
-
+				
 				FetchEventForLocalStorage(shipEventId);
 
 				//remember, this is data that is set based on the idea that this user has never used this device before
-				if (ship == 0) {
-					IncrementEvent(shipEventId, 1); //purchase ship
-					SaveLocalData(shipLivesId, 5); //give first ship full 20 lives
-				}
-				else 
-					SaveLocalData(shipLivesId, 0); //give all other ships 0 lives
-
-				//give the player a ship
-				SaveLocalData(playerShipId, 0); //0 represents the first ship
+				//if (ship == 0) {
+				//	IncrementEvent(shipEventId, 1); //purchase ship
+				//	SaveLocalData(shipLivesId, 5); //give first ship full 20 lives
+				//}
+				//else 
+				SaveLocalData(shipLivesId, 0); //give all other ships 0 lives
 
 				if (USER_ID != string.Empty) loadJobs++;
 			}
+
+			string playerShipId = PrefsUtil.MiscId(MiscType.PLAYER_SHIP_TYPE);
+			//give the player a ship
+			SaveLocalData(playerShipId, 0); //0 represents the first ship
 
 			//loop through timestamps
 			for (int timestamp = 0; timestamp < 8; timestamp++) {
@@ -78,6 +78,16 @@ public class DataStorage {
 				string timestampId = PrefsUtil.TimestampId(timestampType);
 
 				TimeUtil.SaveDateTime(timestampId);
+			}
+
+			//loop through tutorials
+			for (int tutorial = 0; tutorial < 7; tutorial++) {
+				TutorialType tutorialType = (TutorialType)tutorial;
+				string tutorialId = GPGSUtil.TutorialId(tutorialType);
+
+				FetchEventForLocalStorage(tutorialId);
+
+				if (USER_ID != string.Empty) loadJobs++;
 			}
 
 			if (USER_ID != string.Empty) loadJobs += 5;

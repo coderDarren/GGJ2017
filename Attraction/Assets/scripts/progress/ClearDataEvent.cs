@@ -15,10 +15,10 @@ public class ClearDataEvent : ButtonEvent {
 		base.OnItemUp();
 
 		if (option == DataOption.PROGRESS) {
-			ProgressManager.Instance.ResetProgress();
+			//ProgressManager.Instance.ResetProgress();
 			PageManager.Instance.TurnOffPage(PageType.CLEAR_PROGRESS, PageType.SETTINGS);
 		} else {
-			TutorialManager.Instance.ResetTutorials();
+			//TutorialManager.Instance.ResetTutorials();
 			PageManager.Instance.TurnOffPage(PageType.CLEAR_TUTORIALS, PageType.SETTINGS);
 		}
 	}

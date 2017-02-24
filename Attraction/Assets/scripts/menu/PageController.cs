@@ -24,11 +24,20 @@ namespace Menu
 
 		void Start()
 		{
+			Init();
+		}
+
+		void Update() {
+			UpdatePage();
+		}
+
+		protected void Init()
+		{
 			_rect = GetComponent<RectTransform>();
 			_animator = GetComponent<Animator>();
 		}
 
-		void Update()
+		protected void UpdatePage()
 		{
 			if (!_animator)
 			{
@@ -52,6 +61,8 @@ namespace Menu
 						{
 							PageManager.Instance.LoadPage(pageToLoadAfterEntry);
 						}
+
+						OnPageDidEnter();
 					}
 				}
 			}
@@ -62,6 +73,7 @@ namespace Menu
 					{
 						PageManager.Instance.LoadPage(_nextPage);
 					}
+					OnPageDidExit();
 					PageManager.Instance.DestroyPage(pageType);
 				}
 			}
@@ -84,9 +96,13 @@ namespace Menu
 				{
 					PageManager.Instance.LoadPage(_nextPage);
 				}
+				OnPageDidExit();
 				PageManager.Instance.DestroyPage(pageType);
 			}
 		}
+
+		public virtual void OnPageDidEnter() {}
+		public virtual void OnPageDidExit() {}
 	}
 
 }

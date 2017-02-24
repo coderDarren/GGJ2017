@@ -12,12 +12,12 @@ public class ShipFinder  {
 			case ShipType.SHIP_01: 
 				//shipType, name, coast speed, thrust power, thrust accel, accel, armor, sprite, cost
 				sprite = Resources.Load<Sprite>("sprites/icon_ship_04");
-				s = new Ship(ship, "Trainee Shuttle", 1, 1, 0.001f, 0.01f, 20, sprite, 0);
+				s = new Ship(ship, "Trainee Shuttle", 1, 1, 0.001f, 0.01f, 20, sprite, 100);
 				break;
 			case ShipType.SHIP_02: 
 				//shipType, name, coast speed, thrust power, thrust accel, accel, armor, sprite, cost
 				sprite = Resources.Load<Sprite>("sprites/5points");
-				s = new Ship(ship, "The Fighter", 1, 1.25f, 0.0015f, 0.015f, 10, sprite, 750);
+				s = new Ship(ship, "The Fighter", 1, 1.25f, 0.0015f, 0.015f, 10, sprite, 1005);
 				break;
 			case ShipType.SHIP_03: 
 				//shipType, name, coast speed, thrust power, thrust accel, accel, armor, sprite, cost

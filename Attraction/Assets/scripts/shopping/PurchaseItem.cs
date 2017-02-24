@@ -49,7 +49,8 @@ public class PurchaseItem : ButtonEvent {
 		        numSuffix = "B";
 		        break;
 		}
-		string result = shortNumber.ToString("N2") + numSuffix; 
+		string decimals = cost >= 1000 ? "N2" : "N0";
+		string result = shortNumber.ToString(decimals) + numSuffix; 
 		if (result.ToLower() == "nan") { result = "0"; }
 		costText.text = result;
 	}
