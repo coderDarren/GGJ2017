@@ -36,9 +36,9 @@ public class TutorialManager : MonoBehaviour {
 		switch (tutorial)
 		{
 			case TutorialType.BUY_SHIP: PageManager.Instance.LoadPage(PageType.TUTORIALS_BUY_SHIP); break;
-			case TutorialType.BUY_SHIP2: /*PageManager.Instance.LoadPage(PageType.TUTORIALS_BUY_SHIP_02);*/ break;
 			case TutorialType.SHIP_ARMOR: PageManager.Instance.LoadPage(PageType.TUTORIALS_SHIP_ARMOR); break;
 			case TutorialType.THRUST_SHIP: PageManager.Instance.LoadPage(PageType.TUTORIALS_THRUST_SHIP); break;
+			case TutorialType.COLLECT_RESOURCES: PageManager.Instance.LoadPage(PageType.TUTORIALS_COLLECT_RESOURCES); break;
 		}
 	}
 

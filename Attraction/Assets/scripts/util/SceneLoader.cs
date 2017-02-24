@@ -45,14 +45,7 @@ namespace Util {
 		{
 			if (Instance == this) {
 				audioManager = AudioManager.Instance;
-				//StartCoroutine("WaitToStart");
 			}
-		}
-
-		IEnumerator WaitToStart()
-		{
-			yield return new WaitForSeconds(4);
-			LoadScene(GameScene.MENU);
 		}
 
 		/// ----------------------- TRANSITIONS -----------------------

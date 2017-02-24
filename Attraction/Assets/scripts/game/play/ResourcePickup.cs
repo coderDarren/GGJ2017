@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using Types;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class ResourcePickup : SimpleParticleSystem {
@@ -61,6 +62,12 @@ public class ResourcePickup : SimpleParticleSystem {
 	void OnTriggerEnter2D(Collider2D col) {
 		if (!shouldEmit) return;
 		if (col.gameObject.tag == "Player") {
+
+			if (!TutorialManager.Instance.TutorialIsComplete(TutorialType.COLLECT_RESOURCES)) {
+				col.gameObject.GetComponent<ShipController>().Pause();
+				TutorialManager.Instance.TryLaunchTutorial(TutorialType.COLLECT_RESOURCES);
+			}
+
 			shouldEmit = false;
 			GetComponent<SpriteRenderer>().enabled = false;
 			ProgressManager.Instance.AddResources((uint)resources);

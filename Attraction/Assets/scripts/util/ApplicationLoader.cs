@@ -53,7 +53,7 @@ namespace Util {
 		{
 			//force load screen to be on top of all other screens
 			_canvas.sortingOrder = 1001;
-			_transitionAlpha = 0;
+			//_transitionAlpha = 0;
 
 			while (_transitionAlpha < 0.98f)
 			{
@@ -74,7 +74,7 @@ namespace Util {
 			loadingEffect2.On = false;
 
 			yield return new WaitForSeconds(1);
-			_transitionAlpha = 1;
+			//_transitionAlpha = 1;
 			while (_transitionAlpha > 0.02f)
 			{
 				if (!_canvasGroup)

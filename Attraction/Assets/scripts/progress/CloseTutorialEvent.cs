@@ -15,6 +15,10 @@ public class CloseTutorialEvent : ButtonEvent {
 
 	public override void OnItemUp()
 	{
+		if (tutorial == TutorialType.COLLECT_RESOURCES) {
+			GameObject.FindObjectOfType<ShipController>().Unpause();
+		}
+
 		TutorialManager.Instance.MarkTutorialComplete(tutorial);
 		if (loadScene)
 			SceneLoader.Instance.LoadScene(sceneToLoad);

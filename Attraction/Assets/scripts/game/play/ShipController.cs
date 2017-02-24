@@ -60,6 +60,10 @@ public class ShipController : MonoBehaviour {
 	/// </summary>
 	IEnumerator WaitToLaunch()
 	{
+		if (!TutorialManager.Instance.TutorialIsComplete(TutorialType.THRUST_SHIP)) {
+			yield return new WaitForSeconds(1);
+		}
+
 		TutorialManager.Instance.TryLaunchTutorial(TutorialType.THRUST_SHIP);
 		while (!TutorialManager.Instance.TutorialIsComplete(TutorialType.THRUST_SHIP)) {
 			yield return null;

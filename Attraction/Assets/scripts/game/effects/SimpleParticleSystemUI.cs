@@ -87,8 +87,6 @@ public class SimpleParticleSystemUI : MonoBehaviour {
 		public void TickAccel()
 		{
 			velocity += acceleration;
-			if (velocity <= 0)
-				velocity = 0;	
 		}
 
 		public void TickLife()

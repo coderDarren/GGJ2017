@@ -27,12 +27,20 @@ public class SessionManager : MonoBehaviour {
 			scene = SceneLoader.Instance;
 
 #if UNITY_ANDROID
-			ConfigureGooglePlay();
-			Social.localUser.Authenticate(ProcessAuthentication);
+			StartCoroutine("StartupGooglePlayServices");
 #elif !UNITY_ANDROID
 			StartCoroutine("WaitToStart");
 #endif
 		}
+	}
+
+	IEnumerator StartupGooglePlayServices() {
+		yield return new WaitForSeconds(2f); //amount of time the splash is active
+		ApplicationLoader.Instance.StartLoading();
+		while (!ApplicationLoader.Instance.sceneIsFadedOut)
+			yield return null;
+		ConfigureGooglePlay();
+		Social.localUser.Authenticate(ProcessAuthentication);
 	}
 
 	IEnumerator WaitToStart() {
@@ -59,8 +67,8 @@ public class SessionManager : MonoBehaviour {
 			userName = "Guest";
 			userId = string.Empty;
 		}
-		DataStorage.LoadUser(userId, true);
-		ProgressManager.Instance.AddResources(125000);
+		DataStorage.LoadUser(userId, false);
+		//ProgressManager.Instance.AddResources(125000);
 		StartCoroutine("WaitToStart");
 	}
 
