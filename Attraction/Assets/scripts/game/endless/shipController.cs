@@ -6,6 +6,7 @@ public class shipController : MonoBehaviour {
 	public float movementSpeed;
 	public GameObject rocket;
 	public Transform shotPos;
+	public GameObject explosion;
 
 	// Use this for initialization
 	void Start () {
@@ -27,5 +28,12 @@ public class shipController : MonoBehaviour {
 
 	void CreateRocket() {
 		GameObject rocketClone = (GameObject)Instantiate(rocket, shotPos.position, shotPos.rotation);
+	}
+
+	void OnCollisionEnter2D(Collision2D coll) {
+		if(coll.gameObject.tag == "Asteroid") {
+			Instantiate(explosion,transform.position,transform.rotation);
+			Destroy(this.gameObject);
+		}
 	}
 }
