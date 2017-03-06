@@ -4,13 +4,21 @@ using System.Collections;
 public class asteroidMovement : MonoBehaviour {
 
 	float movementSpeed;
+	Rigidbody2D rb;
 	
 	void Start () {
-		movementSpeed = Random.Range(1f,10f);
+		movementSpeed = Random.Range(10f,100f);
+		rb = GetComponent<Rigidbody2D>();
+		rb.AddForce(-transform.up * movementSpeed);
 	}
 
-	// Update is called once per frame
-	void Update () {
-		transform.position -= transform.up * Time.deltaTime * movementSpeed;
+	void FixedUpdate() {
+
+	}
+
+	void OnTriggerEnter(Collider coll) {
+		if(coll.gameObject.tag == "AsteroidDestroyer") {
+			Destroy(this.gameObject);
+		}
 	}
 }

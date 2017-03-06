@@ -21,7 +21,7 @@ public class shipController : MonoBehaviour {
 			transform.position += transform.right * Time.deltaTime * movementSpeed;
 		}
 		if(Input.GetMouseButtonDown(0)) {
-
+			CreateRocket();
 		}
 	}
 
