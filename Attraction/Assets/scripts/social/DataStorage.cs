@@ -169,7 +169,12 @@ public class DataStorage {
 	static void FetchLeaderboardForLocalStorage(string leaderboardId) {
 		if (!SessionManager.Instance.validUser) {
 			//no valid user..no need to poll the cloud. initialize local
-			SaveLocalData(leaderboardId, 0);
+			if (leaderboardId == Remnant.GPGSIds.leaderboard_resources_earned) {
+				SaveLocalData(leaderboardId, 500);
+			}
+			else {
+				SaveLocalData(leaderboardId, 0);
+			}
 			return;
 		}
 
@@ -183,7 +188,16 @@ public class DataStorage {
 			LeaderboardTimeSpan.AllTime,
 			(data) => {	
 				fetchData = (int)data.PlayerScore.value;
-				SaveLocalData(leaderboardId, fetchData);
+
+				//ensure player has some cash
+				if (leaderboardId == Remnant.GPGSIds.leaderboard_resources_earned) {
+					if (fetchData == 0) 
+						ReportLeaderboardScore(leaderboardId, 500);
+					else
+						SaveLocalData(leaderboardId, fetchData);
+				}
+				else
+					SaveLocalData(leaderboardId, fetchData);
 				loadJobs--;
 				Debugger.Log("Load Jobs => "+loadJobs, DebugFlag.STEP);
 		});
@@ -206,6 +220,7 @@ public class DataStorage {
 			eventId,
 			(rs, e) => {
 				fetchData = (int)e.CurrentCount; //store data
+
 				SaveLocalData(eventId, fetchData);
 				loadJobs--;
 				Debugger.Log("Load Jobs => "+loadJobs, DebugFlag.STEP);
