@@ -1,11 +1,10 @@
 fileFormatVersion: 2
-guid: 7e0b2440f785745099a3dc049ef24e20
-timeCreated: 1444211127
-licenseType: Pro
+guid: ed3746f7222f547e4a830a78bb4e8fdc
+timeCreated: 1488254632
+licenseType: Free
 PluginImporter:
   serializedVersion: 1
-  iconMap: 
-    UnityEngine.Purchasing.IAPButton: {fileID: 2800000, guid: e3fc16f00af4e454380f0882baf61fc7, type: 3}
+  iconMap: {}
   executionOrder: {}
   isPreloaded: 0
   platformData:
