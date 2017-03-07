@@ -6,6 +6,8 @@ using Util;
 
 public class ProgressManager : MonoBehaviour {
 
+	const string IOS_DATA_PREFIX = "IOS";
+
 	const int MINUTES_TO_SHIP_RECHARGE = 5;
 	int leftOverMinutes = 0;
 
@@ -95,7 +97,15 @@ public class ProgressManager : MonoBehaviour {
 
 	public bool LevelHasBeenAttempted(GalaxyType galaxy, int level) 
 	{
+
+#if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelAttemptsId(galaxy, level);
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + GPGSUtil.GalaxyLevelAttemptsId(galaxy, level);
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+
 		int attempts = DataStorage.GetLocalData(dataId);
 		if (attempts > 0) {
 			return true;
@@ -105,25 +115,57 @@ public class ProgressManager : MonoBehaviour {
 
 	public int GetLevelStars(GalaxyType galaxy, int level)
 	{
+
+#if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelStarsId(galaxy, level);
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + GPGSUtil.GalaxyLevelStarsId(galaxy, level);
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		
 		return DataStorage.GetLocalData(dataId);
 	}
 
 	public void MarkLevelAttempted(GalaxyType galaxy, int level)
 	{
+
+#if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelAttemptsId(galaxy, level);
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + GPGSUtil.GalaxyLevelAttemptsId(galaxy, level);
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		
 		DataStorage.IncrementEvent(dataId, 1);
 	}
 
 	public void MarkLevelStars(GalaxyType galaxy, int level, int stars)
 	{
+
+#if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelStarsId(galaxy, level);
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + GPGSUtil.GalaxyLevelStarsId(galaxy, level);
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		
 		DataStorage.IncrementEvent(dataId, (uint)stars);
 	}
 
 	public void MarkLevelWins(GalaxyType galaxy, int level)
 	{
+
+#if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelWinsId(galaxy, level);
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + GPGSUtil.GalaxyLevelWinsId(galaxy, level);
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		
 		DataStorage.IncrementEvent(dataId, 1);
 	}
 
@@ -134,7 +176,15 @@ public class ProgressManager : MonoBehaviour {
 
 	public void MarkShipPurchased(ShipType ship) 
 	{
+
+#if UNITY_ANDROID
 		string dataId = GPGSUtil.ShipId(ship);
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + GPGSUtil.ShipId(ship);
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+	
 		int info = DataStorage.GetLocalData(dataId);
 		if (info < 1) {
 			DataStorage.IncrementEvent(dataId, 1);
@@ -143,7 +193,15 @@ public class ProgressManager : MonoBehaviour {
 
 	public bool ShipWasPurchased(ShipType ship)
 	{
+
+#if UNITY_ANDROID
 		string dataId = GPGSUtil.ShipId(ship);
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + GPGSUtil.ShipId(ship);
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		
 		if (dataId == string.Empty) return false;
 		int info = DataStorage.GetLocalData(dataId);
 		if (info == 1) return true;
@@ -205,15 +263,39 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	public int GetResources() {
-		return DataStorage.GetLocalData(Remnant.GPGSIds.leaderboard_resources_earned);
+
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.leaderboard_resources_earned;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.leaderboard_resources_earned;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		return DataStorage.GetLocalData(dataId);
 	}
 
 	public int GetResourcesSpent() {
-		return DataStorage.GetLocalData(Remnant.GPGSIds.event_resources_spent);
+
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.event_resources_spent;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.event_resources_spent;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		return DataStorage.GetLocalData(dataId);
 	}
 
 	public int GetStars() {
-		return DataStorage.GetLocalData(Remnant.GPGSIds.leaderboard_stars_earned);
+
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.leaderboard_stars_earned;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.leaderboard_stars_earned;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		return DataStorage.GetLocalData(dataId);
 	}
 
 	public int GetTotalResources() {
@@ -221,7 +303,15 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	public void AddResourcesSpent(int amount) {
-		DataStorage.IncrementEvent(Remnant.GPGSIds.event_resources_spent, (uint)amount);
+
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.event_resources_spent;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.event_resources_spent;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		DataStorage.IncrementEvent(dataId, (uint)amount);
 	}
 
 	public void UpdateGlobalResourceNotification(int amount) {
@@ -229,24 +319,56 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	public void AddResources(uint amount) {
+
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.event_resources_earned;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.event_resources_earned;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
 		int current = GetResources();
 		SetResources((uint)current + amount);
-		DataStorage.IncrementEvent(Remnant.GPGSIds.event_resources_earned, amount);
+		DataStorage.IncrementEvent(dataId, amount);
 	}
 
 	void SetResources(uint amount) {
-		DataStorage.ReportLeaderboardScore(Remnant.GPGSIds.leaderboard_resources_earned, amount);
+
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.leaderboard_resources_earned;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.leaderboard_resources_earned;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		DataStorage.ReportLeaderboardScore(dataId, amount);
 		UpdateGlobalResourceNotification(GetTotalResources());
 	}
 
 	public void AddStars(uint amount) {
 		int current = GetStars();
 		SetStars((uint)current + amount);
-		DataStorage.IncrementEvent(Remnant.GPGSIds.event_stars_earned, amount);
+
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.event_stars_earned;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.event_stars_earned;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		DataStorage.IncrementEvent(dataId, amount);
 	}
 
 	void SetStars(uint amount) {
-		DataStorage.ReportLeaderboardScore(Remnant.GPGSIds.leaderboard_stars_earned, amount);
+
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.leaderboard_stars_earned;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.leaderboard_stars_earned;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		DataStorage.ReportLeaderboardScore(dataId, amount);
 		try { UpdateStarsText((int)amount); } catch(System.NullReferenceException e) {}
 	}
 

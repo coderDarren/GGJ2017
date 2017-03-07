@@ -27,9 +27,13 @@ public class SessionManager : MonoBehaviour {
 			scene = SceneLoader.Instance;
 
 #if UNITY_ANDROID
+
 			StartCoroutine("StartupGooglePlayServices");
+
 #elif !UNITY_ANDROID
+
 			StartCoroutine("WaitToStart");
+			
 #endif
 		}
 	}
@@ -104,16 +108,43 @@ public class SessionManager : MonoBehaviour {
 
 	public void ShowAchievements() {
 
+#if UNITY_ANDROID
+
 		PlayGamesPlatform.Instance.ShowAchievementsUI();
+
+#elif UNITY_IOS
+
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+
 	}
 
 	public void ShowLeaderboard() {
 
+#if UNITY_ANDROID
+
 		PlayGamesPlatform.Instance.ShowLeaderboardUI();
+
+#elif UNITY_IOS
+
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+
 	}
 
 	public void ShowLeaderboard(string leaderboardId) {
 
+#if UNITY_ANDROID
+
 		PlayGamesPlatform.Instance.ShowLeaderboardUI(leaderboardId);
+		
+#elif UNITY_IOS
+
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+
 	}
 }

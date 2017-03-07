@@ -119,14 +119,22 @@ public class DataStorage {
 	public static void IncrementEvent(string eventId, uint amount) {
 
 		int newValue = GetLocalData(eventId) + (int)amount;
+		SaveLocalData(eventId, newValue);
 
 		if (!SessionManager.Instance.validUser) {
-			SaveLocalData(eventId, newValue);
 			return;
 		}
 
+#if UNITY_ANDROID
+
 		PlayGamesPlatform.Instance.Events.IncrementEvent(eventId, amount);
-		SaveLocalData(eventId, newValue);
+
+#elif UNITY_IOS
+
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+
 	}
 
 	public static void IncrementLevelAchievement(GalaxyType galaxy, int level, int amount) {
@@ -136,6 +144,8 @@ public class DataStorage {
 			return;
 		}
 
+#if UNITY_ANDROID
+
 		PlayGamesPlatform.Instance.IncrementAchievement(
 	 	   achievementId, amount, (success) => {
 	 	   	if (success) {
@@ -144,21 +154,27 @@ public class DataStorage {
 	 	   		//page.Configure(level - 1, level, 5);
 	 	   	}
 	   	});
+
+#elif UNITY_IOS
+
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
 	}
 
 	public static int GetLocalData(string dataId) {
 		int ret = PlayerPrefs.GetInt(USER_ID+dataId);
-		if (debug) Debugger.Log("DATA STORAGE EVENT: Retrieving data for " + GPGSUtil.GetIdDecrypted(dataId) + " => " +ret, DebugFlag.TASK);
+		//if (debug) Debugger.Log("DATA STORAGE EVENT: Retrieving data for " + GPGSUtil.GetIdDecrypted(dataId) + " => " +ret, DebugFlag.TASK);
 		return ret;
 	}
 
 	public static void SaveLocalData(string dataId, int amount) {
-		if (debug) Debugger.Log("DATA STORAGE EVENT: Saving data " +amount+ " to " +GPGSUtil.GetIdDecrypted(dataId), DebugFlag.TASK);
+		//if (debug) Debugger.Log("DATA STORAGE EVENT: Saving data " +amount+ " to " +GPGSUtil.GetIdDecrypted(dataId), DebugFlag.TASK);
 		PlayerPrefs.SetInt(USER_ID+dataId, amount);
 	}
 
 	public static void SaveTimeData(string dataId, string data) {
-		if (debug) Debugger.Log("DATA STORAGE EVENT: Saving data " +data+ " to " +dataId, DebugFlag.TASK);
+		//if (debug) Debugger.Log("DATA STORAGE EVENT: Saving data " +data+ " to " +dataId, DebugFlag.TASK);
 		PlayerPrefs.SetString(USER_ID+dataId, data);
 	}
 
@@ -179,6 +195,8 @@ public class DataStorage {
 		}
 
 		int fetchData = 0;
+
+#if UNITY_ANDROID
 
 		PlayGamesPlatform.Instance.LoadScores(
 			leaderboardId,
@@ -201,6 +219,13 @@ public class DataStorage {
 				loadJobs--;
 				Debugger.Log("Load Jobs => "+loadJobs, DebugFlag.STEP);
 		});
+
+#elif UNITY_IOS
+
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+
 	}
 
 	/// <summary>
@@ -215,6 +240,8 @@ public class DataStorage {
 
 		int fetchData = 0;
 
+#if UNITY_ANDROID
+
 		PlayGamesPlatform.Instance.Events.FetchEvent(
 			DataSource.ReadCacheOrNetwork,
 			eventId,
@@ -225,6 +252,13 @@ public class DataStorage {
 				loadJobs--;
 				Debugger.Log("Load Jobs => "+loadJobs, DebugFlag.STEP);
 		});
+
+#elif UNITY_IOS
+
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+
 	}
 
 }
