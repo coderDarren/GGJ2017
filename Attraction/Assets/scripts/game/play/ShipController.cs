@@ -109,12 +109,14 @@ public class ShipController : MonoBehaviour {
 	        		state = State.DECCEL;
 	        		OnThrustersDisengage();
 	        	}
-	        }
-			if (Input.GetKeyDown(KeyCode.Space)) {
-				this.transform.position = startPos.position;
-				this.transform.rotation = initialRot;
-			}
+	        }			
     	}
+
+    	if (Input.GetKeyDown(KeyCode.Space)) {
+			this.transform.position = startPos.position;
+			this.transform.rotation = initialRot;
+			state = State.ACCEL;
+		}
     }
 
 	public void Wait()
