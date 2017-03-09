@@ -19,10 +19,10 @@ public class GameStateEvent : ButtonEvent {
 		ship = GameObject.FindObjectOfType<ShipController>();
 
 		if (eventType == EventType.PAUSE) {
-			PageManager.Instance.TurnOffPage(PageType.PLAY, PageType.PAUSE);
+			PageManager.Instance.LoadPage(PageType.PAUSE);
 			ship.Pause();
 		} else {
-			PageManager.Instance.TurnOffPage(PageType.PAUSE, PageType.PLAY);
+			PageManager.Instance.TurnOffPage(PageType.PAUSE, PageType.NONE);
 			ship.Unpause();
 		}
 	}

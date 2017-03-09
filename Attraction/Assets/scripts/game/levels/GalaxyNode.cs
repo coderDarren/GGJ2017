@@ -27,8 +27,10 @@ public class GalaxyNode : MonoBehaviour {
 			icon.color = disabledColor;
 			icon.sprite = padLockIcon;
 			circle.color = disabledColor;
-			title.text = "undiscovered";
-			title.color = disabledColor;
+			if (title != null) {
+				title.text = "undiscovered";
+				title.color = disabledColor;
+			}
 			button.enabled = false;
 		}
 	}

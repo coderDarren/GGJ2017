@@ -12,6 +12,8 @@ public class ShipController : MonoBehaviour {
 	public delegate void ThrusterDelegate();
 	public static event ThrusterDelegate OnThrustersEngage;
 	public static event ThrusterDelegate OnThrustersDisengage;
+	public delegate void ThrusterHUDDelegate(float curr, float max);
+	public static event ThrusterHUDDelegate UpdateThrusterHUD;
 	public delegate void LifeFlashDelegate();
 	public static event LifeFlashDelegate OnFlashLifeIcon;
 
@@ -20,8 +22,9 @@ public class ShipController : MonoBehaviour {
     public float accel = 0.01f;
     public float coast = 1;
     public ExplosionParticles explosion;
+    public bool thrustersEngage;
 
-	int lives = 5;
+	public int lives = 5;
 	float startTime;
 	float journeyLength;
 
@@ -87,6 +90,8 @@ public class ShipController : MonoBehaviour {
     		return;
     	}
 
+    	try {UpdateThrusterHUD(thrust, thrustPower);} catch (System.NullReferenceException e) {}
+
         switch (state) {
 			case State.WAIT: Wait(); break;
         	case State.ACCEL: Accelerate(); break;
@@ -99,7 +104,7 @@ public class ShipController : MonoBehaviour {
 
         if ((state == State.ACCEL || state == State.DECCEL || state == State.THRUST) && lives > 0) {
 
-	        if (Input.GetKey(KeyCode.Mouse0)) {
+	        if (thrustersEngage) {
 	        	if (state != State.THRUST) {
 	        		state = State.THRUST;
 	        		OnThrustersEngage();
@@ -166,11 +171,11 @@ public class ShipController : MonoBehaviour {
 	public void ReduceLives()
 	{
 		OnThrustersDisengage();
+		OnFlashLifeIcon();
 		lives --;
 		ProgressManager.Instance.SetShipLives(ship.shipType, ship.lives - 1);
 		if (lives >= 1) {
 			OnLivesChanged(lives);
-			OnFlashLifeIcon();
 			ReturnToBeginning();
 		}
 		else if (lives == 0) {
