@@ -10,7 +10,7 @@ public class HUD : MonoBehaviour {
 
 	void OnEnable()
 	{
-		lifeFillBar.fillAmount = GameObject.FindObjectOfType<ShipController>().lives / 5.0f;
+		lifeFillBar.fillAmount = (GameObject.FindObjectOfType<ShipController>().lives / 5.0f);
 		countdownText.color = Color.white;
 		ShipController.OnLivesChanged += OnLivesChanged;
 		ShipController.OnCountdown += OnCountdown;

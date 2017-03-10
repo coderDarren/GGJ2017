@@ -16,6 +16,7 @@ public class NextLevelEvent : ButtonEvent {
 	public Text lvlText;
 	public Color inactiveColor;
 	public PageType pageToRemove;
+	public PageType[] additionalPagesToRemove;
 	public bool initOnStart;
 
 	LevelLoader level;
@@ -86,7 +87,13 @@ public class NextLevelEvent : ButtonEvent {
 		base.OnItemUp();
 
 		level.SetLevelInfo(targetGalaxy, targetLevel);
-		PageManager.Instance.TurnOffPage(pageToRemove, PageType.NONE);
+		if (pageToRemove != PageType.NONE)
+			{
+				for (int i = 0; i < additionalPagesToRemove.Length; i++) {
+					PageManager.Instance.TurnOffPage(additionalPagesToRemove[i], PageType.NONE);
+				}
+				PageManager.Instance.TurnOffPage(pageToRemove, PageType.NONE);
+			}
 		progress.MarkLevelAttempted(targetGalaxy, targetLevel);
 		SceneLoader.Instance.LoadPlaySceneInstant();
 	}

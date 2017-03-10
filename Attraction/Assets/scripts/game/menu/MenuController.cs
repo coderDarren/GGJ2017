@@ -17,10 +17,10 @@ public class MenuController : PageController {
 	}
 
 	public override void OnPageDidEnter() {
-		if (!tutorial.TutorialIsComplete(TutorialType.BUY_SHIP))
+		/*if (!tutorial.TutorialIsComplete(TutorialType.BUY_SHIP))
 			tutorial.TryLaunchTutorial(TutorialType.BUY_SHIP);
 		else
-			tutorial.TryLaunchTutorial(TutorialType.SHIP_ARMOR);
+			tutorial.TryLaunchTutorial(TutorialType.SHIP_ARMOR);*/
 	}
 
 }

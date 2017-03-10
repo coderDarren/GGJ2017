@@ -15,7 +15,7 @@ public class GravityWellParticlesUI : SimpleParticleSystemUI {
 	{
 		Init();
 		gravitySettings.radius *= 600;
-		gravitySettings.radius /= Screen.width;
+		gravitySettings.radius /= Screen.currentResolution.width;
 		StartCoroutine("SpawnParticles");
 	}
 

@@ -51,7 +51,7 @@ public class SessionManager : MonoBehaviour {
 		while (DataStorage.LOADING_USER) {
 			yield return null;
 		}
-		ProgressManager.Instance.StartCoroutine("ProcessTimestamps");
+		//ProgressManager.Instance.StartCoroutine("ProcessTimestamps");
 		scene.LoadScene(GameScene.MENU);
 	}
 

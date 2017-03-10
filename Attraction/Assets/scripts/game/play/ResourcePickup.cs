@@ -63,10 +63,10 @@ public class ResourcePickup : SimpleParticleSystem {
 		if (!shouldEmit) return;
 		if (col.gameObject.tag == "Player") {
 
-			if (!TutorialManager.Instance.TutorialIsComplete(TutorialType.COLLECT_RESOURCES)) {
+			/*if (!TutorialManager.Instance.TutorialIsComplete(TutorialType.COLLECT_RESOURCES)) {
 				col.gameObject.GetComponent<ShipController>().Pause();
 				TutorialManager.Instance.TryLaunchTutorial(TutorialType.COLLECT_RESOURCES);
-			}
+			}*/
 
 			shouldEmit = false;
 			GetComponent<SpriteRenderer>().enabled = false;

@@ -63,14 +63,14 @@ public class ShipController : MonoBehaviour {
 	/// </summary>
 	IEnumerator WaitToLaunch()
 	{
-		if (!TutorialManager.Instance.TutorialIsComplete(TutorialType.THRUST_SHIP)) {
+		/*if (!TutorialManager.Instance.TutorialIsComplete(TutorialType.THRUST_SHIP)) {
 			yield return new WaitForSeconds(1);
-		}
+		}*/
 
-		TutorialManager.Instance.TryLaunchTutorial(TutorialType.THRUST_SHIP);
+		/*TutorialManager.Instance.TryLaunchTutorial(TutorialType.THRUST_SHIP);
 		while (!TutorialManager.Instance.TutorialIsComplete(TutorialType.THRUST_SHIP)) {
 			yield return null;
-		}
+		}*/
 		
 		int countdown = 3;
 		while (countdown >= 0) {
@@ -173,7 +173,7 @@ public class ShipController : MonoBehaviour {
 		OnThrustersDisengage();
 		OnFlashLifeIcon();
 		lives --;
-		ProgressManager.Instance.SetShipLives(ship.shipType, ship.lives - 1);
+		//ProgressManager.Instance.SetShipLives(ship.shipType, ship.lives - 1);
 		if (lives >= 1) {
 			OnLivesChanged(lives);
 			ReturnToBeginning();
