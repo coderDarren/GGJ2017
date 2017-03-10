@@ -1,14 +1,16 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using Menu;
 using Types;
 
 public class ActivateShipEvent : ButtonEvent {
 
+	public Text activeText;
+
 	ShipType shipType;
 	ShipDock dock;
 	Ship ship;
-	CanvasGroup canvas;
 
 	void Start() {
 		InitButton();
@@ -16,14 +18,20 @@ public class ActivateShipEvent : ButtonEvent {
 		dock = GameObject.FindObjectOfType<ShipDock>();
 		shipType = dock.activeShip;
 		ship = ShipFinder.GetShip(shipType);
-		canvas = GetComponent<CanvasGroup>();
 
 		if (!ship.purchased ||
 			shipType == ProgressManager.Instance.PlayerShip() ||
 			ProgressManager.Instance.PlayerShip() == ShipType.SHIP_NONE) {
 			interactable = false;
-			canvas.alpha = 0; 
 			gameObject.SetActive(false);
+		}
+
+		if (shipType == ProgressManager.Instance.PlayerShip()) {
+			activeText.gameObject.SetActive(true);
+		}
+
+		if (!ship.purchased) {
+			activeText.gameObject.SetActive(false);
 		}
 	}
 

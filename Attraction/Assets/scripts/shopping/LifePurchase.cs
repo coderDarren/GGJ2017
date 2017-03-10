@@ -39,7 +39,6 @@ public class LifePurchase : PurchaseItem {
 		if (!ship.purchased || 
 			shipType != ProgressManager.Instance.PlayerShip()) {
 			interactable = false;
-			canvas.alpha = 0;
 			//gameObject.SetActive(false);
 			return;
 		}
@@ -51,7 +50,6 @@ public class LifePurchase : PurchaseItem {
 
 				if (ship.lives == ship.armor) {
 					interactable = false;
-					canvas.alpha = disabledAlpha;
 				}
 
 				break;
@@ -61,7 +59,6 @@ public class LifePurchase : PurchaseItem {
 
 				if (ship.armor - ship.lives <= 1) {
 					interactable = false;
-					canvas.alpha = disabledAlpha;
 				}
 
 				break;
@@ -72,7 +69,6 @@ public class LifePurchase : PurchaseItem {
 		int playerResources = ProgressManager.Instance.GetTotalResources();
 		if (playerResources < cost) {
 			interactable = false;
-			canvas.alpha = disabledAlpha;
 		}
 
 		ProgressManager.Instance.UpdateGlobalResourceNotification(playerResources);

@@ -29,7 +29,7 @@ namespace Menu {
 			PageLoadToggleEvent.ToggleThis -= OnToggleThis;
 		}
 
-		void OnToggleThis(ButtonEvent be, int id)
+		public virtual void OnToggleThis(ButtonEvent be, int id)
 		{
 			if (id != toggleGroupId)
 				return; //event not intended for this toggle group
@@ -48,9 +48,13 @@ namespace Menu {
 			}
 		}
 
+		protected void Toggle(ButtonEvent be, int id) {
+			ToggleThis(this, toggleGroupId); //notify other buttons with this group identifier
+		}
+
 		public override void OnItemUp()
 		{
-			ToggleThis(this, toggleGroupId); //notify other buttons with this group identifier
+			Toggle(this, toggleGroupId);
 			PageManager.Instance.LoadPage(pageToLoad);
 		}
 

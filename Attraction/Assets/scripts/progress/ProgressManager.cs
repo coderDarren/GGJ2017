@@ -15,6 +15,9 @@ public class ProgressManager : MonoBehaviour {
 	public event UIStatTextDelegate UpdateStarsText;
 	public event UIStatTextDelegate UpdateResourcesText;
 
+	public delegate void UIShipDelegate(ShipType ship);
+	public event UIShipDelegate UpdateShipUI;
+
 	public static ProgressManager Instance;
 
 	void Awake()
@@ -26,6 +29,9 @@ public class ProgressManager : MonoBehaviour {
 		else
 		{
 			Instance = this;
+			if (PlayerShip() == ShipType.SHIP_NONE) {
+				SetPlayerShip(ShipType.SHIP_01);
+			}
 		}
 	}
 
@@ -247,6 +253,8 @@ public class ProgressManager : MonoBehaviour {
 		string dataId = PrefsUtil.MiscId(MiscType.PLAYER_SHIP_TYPE);
 		int shipId = (int)ship;
 		DataStorage.SaveLocalData(dataId, shipId);
+
+		try { UpdateShipUI(ship); } catch(System.NullReferenceException e) {}
 	}
 
 	public ShipType PlayerShip()
@@ -311,6 +319,8 @@ public class ProgressManager : MonoBehaviour {
 #elif !UNITY_ANDROID && !UNITY_IOS
 
 #endif
+
+		UpdateGlobalResourceNotification(GetTotalResources());
 		DataStorage.IncrementEvent(dataId, (uint)amount);
 	}
 

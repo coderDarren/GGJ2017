@@ -58,12 +58,12 @@ public class DataStorage {
 				FetchEventForLocalStorage(shipEventId);
 
 				//remember, this is data that is set based on the idea that this user has never used this device before
-				//if (ship == 0) {
-				//	IncrementEvent(shipEventId, 1); //purchase ship
-				//	SaveLocalData(shipLivesId, 5); //give first ship full 20 lives
-				//}
+				if (ship == 1) {
+					IncrementEvent(shipEventId, 1); //purchase ship
+					//SaveLocalData(shipLivesId, 5); //give first ship full 20 lives
+				}
 				//else 
-				SaveLocalData(shipLivesId, 0); //give all other ships 0 lives
+				//SaveLocalData(shipLivesId, 0); //give all other ships 0 lives
 
 				if (USER_ID != string.Empty) loadJobs++;
 			}

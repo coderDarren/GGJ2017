@@ -8,8 +8,8 @@ public class PurchaseItem : ButtonEvent {
 
 	public Text costText;
 	public PurchaseType purchaseType;
-	public CanvasGroup canvas;
 	public float disabledAlpha = 0.5f;
+	public CanvasGroup canvas;
 
 	public override void OnItemUp() {
 		base.OnItemUp();

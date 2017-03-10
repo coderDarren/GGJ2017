@@ -13,6 +13,13 @@ public class SocialEvent : ButtonEvent {
 		LEADERBOARD_RESOURCES
 	}
 	public SocialEventType eventType;
+
+	[System.Serializable]
+	public struct Icon {
+		public Color enabledColor, disabledColor;
+		public Image icon;
+	}
+	public Icon[] icons;
 	public Color enabledColor, disabledColor;
 	public Image icon;
 
@@ -28,11 +35,13 @@ public class SocialEvent : ButtonEvent {
 		if (eventType != SocialEventType.LOGIN) {
 			if (session.validUser) {
 				_image.color = enabledColor;
-				icon.color = enabledColor;
+				foreach (Icon icon in icons)
+					icon.icon.color = icon.enabledColor;
 				interactable = true;
 			} else {
 				_image.color = disabledColor;
-				icon.color = disabledColor;
+				foreach (Icon icon in icons)
+					icon.icon.color = icon.disabledColor;
 				interactable = false;
 			}
 		}

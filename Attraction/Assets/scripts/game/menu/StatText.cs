@@ -98,7 +98,7 @@ public class StatText : MonoBehaviour {
 		        numSuffix = "B";
 		        break;
 		}
-		string decimals = current >= 1000 ? "N2" : "N0";
+		string decimals = current >= 1000 ? "N1" : "N0";
 		string result = shortNumber.ToString(decimals) + numSuffix; 
 		if (result.ToLower() == "nan") { result = "0"; }
 		t.text = prefix + result + suffix;

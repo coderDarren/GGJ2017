@@ -40,12 +40,12 @@ public class ShipPurchase : PurchaseItem {
 	public override void BuyShip() {
 		progress.MarkShipPurchased(shipType);
 		progress.AddResourcesSpent(cost);
-		progress.SaveShipArmorTimestamp(shipType);
-		progress.SetShipLives(shipType, ship.armor / 4);
+		//progress.SaveShipArmorTimestamp(shipType);
+		//progress.SetShipLives(shipType, ship.armor / 4);
 
 		if (progress.PlayerShip() == ShipType.SHIP_NONE) {
 			progress.SetPlayerShip(shipType);
-			TutorialManager.Instance.MarkTutorialComplete(TutorialType.BUY_SHIP);
+			//TutorialManager.Instance.MarkTutorialComplete(TutorialType.BUY_SHIP);
 		}
 
 		PageManager.Instance.TurnOffPage(PageType.SHIP_STORE, PageType.NONE);
