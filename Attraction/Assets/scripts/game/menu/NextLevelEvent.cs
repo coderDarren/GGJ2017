@@ -69,7 +69,16 @@ public class NextLevelEvent : ButtonEvent {
 
 		if (targetGalaxy == GalaxyType.NONE) targetIsAvailable = false; //in this context, galaxy type of NONE would indicate the galaxy does not exist
 
-		lvlText.text = "LVL " +targetLevel.ToString();
+		int adjustedLevel = targetGalaxy == GalaxyType.HOME_GALAXY ? targetLevel :
+							targetGalaxy == GalaxyType.DAHKRI_GALAXY ? targetLevel + 5 :
+							targetGalaxy == GalaxyType.XILYANTIPHOR_GALAXY ? targetLevel + 10 :
+							targetGalaxy == GalaxyType.ZAX_GALAXY ? targetLevel + 15 :
+							targetGalaxy == GalaxyType.VIDON_GALAXY ? targetLevel + 20 :
+							targetGalaxy == GalaxyType.KYDOR_GALAXY ? targetLevel + 25 :
+							targetGalaxy == GalaxyType.RYKTAR_GALAXY ? targetLevel + 30 :
+							targetGalaxy == GalaxyType.MALIX_GALAXY ? targetLevel + 35 : targetLevel;
+
+		lvlText.text = "LVL " +adjustedLevel.ToString();
 
 		if (!targetIsAvailable) {
 			interactable = false;

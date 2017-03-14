@@ -17,7 +17,17 @@ public class LevelWinPage : MonoBehaviour {
 	public void ConfigurePage(GalaxyType galaxy, int level, int lives)
 	{
 		galaxyName.text = Utility.GalaxyToString(galaxy);
-		lvlText.text = "LVL " +level.ToString();
+
+		int adjustedLevel = galaxy == GalaxyType.HOME_GALAXY ? level :
+							galaxy == GalaxyType.DAHKRI_GALAXY ? level + 5 :
+							galaxy == GalaxyType.XILYANTIPHOR_GALAXY ? level + 10 :
+							galaxy == GalaxyType.ZAX_GALAXY ? level + 15 :
+							galaxy == GalaxyType.VIDON_GALAXY ? level + 20 :
+							galaxy == GalaxyType.KYDOR_GALAXY ? level + 25 :
+							galaxy == GalaxyType.RYKTAR_GALAXY ? level + 30 :
+							galaxy == GalaxyType.MALIX_GALAXY ? level + 35 : level;
+
+		lvlText.text = "LVL " +adjustedLevel.ToString();
 
 		int sessionStars = lives >= 3 ? 3 : lives;
 		int currStars = ProgressManager.Instance.GetLevelStars(galaxy, level);
@@ -27,6 +37,7 @@ public class LevelWinPage : MonoBehaviour {
 		if (unlockedStars > 0) {
 			ProgressManager.Instance.MarkLevelStars(galaxy, level, unlockedStars); //adds to level star count
 			ProgressManager.Instance.AddStars((uint)unlockedStars); //adds to total star count
+			ProgressManager.Instance.AddResources((uint)unlockedStars * 50);
 		}
 
 		//increment galaxy completion achievement

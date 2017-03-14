@@ -82,9 +82,7 @@ public class LevelSceneController : MonoBehaviour {
 		else {
 			bool galaxyIsAvailable = ProgressManager.Instance.GalaxyIsAvailable(activeGalaxy);
 			if (!galaxyIsAvailable) {
-				pageManager.LoadPage(PageType.GALAXY_INFO);
-				GalaxyInfoPage infoPage = GameObject.FindObjectOfType<GalaxyInfoPage>();
-				infoPage.ConfigureInfo(activeGalaxy, activeZone.pageToLoad);
+				StartCoroutine("ZoomToGalaxy", galaxyViewPoint); 
 			} else {
 				pageManager.LoadPage(activeZone.pageToLoad);
 			}
