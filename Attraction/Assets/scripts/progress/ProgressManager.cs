@@ -103,7 +103,6 @@ public class ProgressManager : MonoBehaviour {
 
 	public bool LevelHasBeenAttempted(GalaxyType galaxy, int level) 
 	{
-
 #if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelAttemptsId(galaxy, level);
 #elif UNITY_IOS
@@ -121,7 +120,6 @@ public class ProgressManager : MonoBehaviour {
 
 	public int GetLevelStars(GalaxyType galaxy, int level)
 	{
-
 #if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelStarsId(galaxy, level);
 #elif UNITY_IOS
@@ -135,7 +133,6 @@ public class ProgressManager : MonoBehaviour {
 
 	public void MarkLevelAttempted(GalaxyType galaxy, int level)
 	{
-
 #if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelAttemptsId(galaxy, level);
 #elif UNITY_IOS
@@ -149,7 +146,6 @@ public class ProgressManager : MonoBehaviour {
 
 	public void MarkLevelStars(GalaxyType galaxy, int level, int stars)
 	{
-
 #if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelStarsId(galaxy, level);
 #elif UNITY_IOS
@@ -163,7 +159,6 @@ public class ProgressManager : MonoBehaviour {
 
 	public void MarkLevelWins(GalaxyType galaxy, int level)
 	{
-
 #if UNITY_ANDROID
 		string dataId = GPGSUtil.GalaxyLevelWinsId(galaxy, level);
 #elif UNITY_IOS
@@ -182,7 +177,6 @@ public class ProgressManager : MonoBehaviour {
 
 	public void MarkShipPurchased(ShipType ship) 
 	{
-
 #if UNITY_ANDROID
 		string dataId = GPGSUtil.ShipId(ship);
 #elif UNITY_IOS
@@ -199,7 +193,6 @@ public class ProgressManager : MonoBehaviour {
 
 	public bool ShipWasPurchased(ShipType ship)
 	{
-
 #if UNITY_ANDROID
 		string dataId = GPGSUtil.ShipId(ship);
 #elif UNITY_IOS
@@ -261,6 +254,11 @@ public class ProgressManager : MonoBehaviour {
 	{
 		string dataId = PrefsUtil.MiscId(MiscType.PLAYER_SHIP_TYPE);
 		int ship = DataStorage.GetLocalData(dataId);
+		if (ship == 0) {
+			ship = 1;
+			MarkShipPurchased((ShipType)ship);
+			SetPlayerShip((ShipType)ship);
+		}
 		return (ShipType)ship;
 	}
 
@@ -271,7 +269,6 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	public int GetResources() {
-
 #if UNITY_ANDROID
 		string dataId = Remnant.GPGSIds.leaderboard_resources_earned;
 #elif UNITY_IOS
@@ -283,7 +280,6 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	public int GetResourcesSpent() {
-
 #if UNITY_ANDROID
 		string dataId = Remnant.GPGSIds.event_resources_spent;
 #elif UNITY_IOS
@@ -295,7 +291,6 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	public int GetStars() {
-
 #if UNITY_ANDROID
 		string dataId = Remnant.GPGSIds.leaderboard_stars_earned;
 #elif UNITY_IOS
@@ -311,7 +306,6 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	public void AddResourcesSpent(int amount) {
-
 #if UNITY_ANDROID
 		string dataId = Remnant.GPGSIds.event_resources_spent;
 #elif UNITY_IOS
@@ -329,7 +323,6 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	public void AddResources(uint amount) {
-
 #if UNITY_ANDROID
 		string dataId = Remnant.GPGSIds.event_resources_earned;
 #elif UNITY_IOS
@@ -343,7 +336,6 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	void SetResources(uint amount) {
-
 #if UNITY_ANDROID
 		string dataId = Remnant.GPGSIds.leaderboard_resources_earned;
 #elif UNITY_IOS
@@ -358,7 +350,6 @@ public class ProgressManager : MonoBehaviour {
 	public void AddStars(uint amount) {
 		int current = GetStars();
 		SetStars((uint)current + amount);
-
 #if UNITY_ANDROID
 		string dataId = Remnant.GPGSIds.event_stars_earned;
 #elif UNITY_IOS
@@ -370,7 +361,6 @@ public class ProgressManager : MonoBehaviour {
 	}
 
 	void SetStars(uint amount) {
-
 #if UNITY_ANDROID
 		string dataId = Remnant.GPGSIds.leaderboard_stars_earned;
 #elif UNITY_IOS

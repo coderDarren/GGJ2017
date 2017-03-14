@@ -16,7 +16,15 @@ public class SessionManager : MonoBehaviour {
 	public string userName { get; private set; }
 	public string userId { get; private set; }
 	public bool validUser { 
-		get { return PlayGamesPlatform.Instance.IsAuthenticated(); }
+		get { 
+	#if UNITY_ANDROID
+			return PlayGamesPlatform.Instance.IsAuthenticated(); 
+	#elif UNITY_IOS
+			return false;
+	#elif !UNITY_IOS && !UNITY_ANDROID
+			return false;
+	#endif
+		}
 	}
 
 	SceneLoader scene;
@@ -71,7 +79,7 @@ public class SessionManager : MonoBehaviour {
 			userName = "Guest";
 			userId = string.Empty;
 		}
-		DataStorage.LoadUser(userId, true);
+		DataStorage.LoadUser(userId, false);
 		//ProgressManager.Instance.AddResources(125000);
 		StartCoroutine("WaitToStart");
 	}
