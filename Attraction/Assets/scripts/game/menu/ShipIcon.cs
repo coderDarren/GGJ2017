@@ -7,6 +7,7 @@ using Types;
 public class ShipIcon : MonoBehaviour {
 
 	void OnEnable() {
+		OnShipChanged(ProgressManager.Instance.PlayerShip());
 		ProgressManager.Instance.UpdateShipUI += OnShipChanged;
 	}
 
