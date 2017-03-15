@@ -162,6 +162,30 @@ public class DataStorage {
 #endif
 	}
 
+	public static void IncrementAchievement(string achievementId, int amount) {
+		
+		if (achievementId == string.Empty) {
+			return;
+		}
+
+#if UNITY_ANDROID
+
+		PlayGamesPlatform.Instance.IncrementAchievement(
+	 	   achievementId, amount, (success) => {
+	 	   	if (success) {
+	 	   		//PageManager.Instance.LoadPage(PageType.ACHIEVEMENT_PROGRESS);
+	 	   		//AchievementProgressPage page = GameObject.FindObjectOfType<AchievementProgressPage>();
+	 	   		//page.Configure(level - 1, level, 5);
+	 	   	}
+	   	});
+
+#elif UNITY_IOS
+
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+	}
+
 	public static int GetLocalData(string dataId) {
 		int ret = PlayerPrefs.GetInt(USER_ID+dataId);
 		//if (debug) Debugger.Log("DATA STORAGE EVENT: Retrieving data for " + GPGSUtil.GetIdDecrypted(dataId) + " => " +ret, DebugFlag.TASK);

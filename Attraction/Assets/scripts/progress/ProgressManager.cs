@@ -87,12 +87,22 @@ public class ProgressManager : MonoBehaviour {
 		//if galaxy does not exist
 		if (galaxy == GalaxyType.NONE) return false;
 
-		//if level is 1, return true
-		if (level == 1) return true;
+		int checkLevel = 0;
+		int stars = 0;
+		GalaxyType previousGalaxy = PreviousGalaxy(galaxy);
 
 		//otherwise we need to check if the previous level has been completed
-		int checkLevel = level - 1;
-		int stars = GetLevelStars(galaxy, checkLevel);
+		if (level == 1) {
+			if (galaxy == GalaxyType.HOME_GALAXY) return true;
+			else {
+				checkLevel = 5;
+				stars = GetLevelStars(previousGalaxy, checkLevel);
+			}
+		}
+		else {
+			checkLevel = level - 1;
+			stars = GetLevelStars(galaxy, checkLevel);
+		}
 		
 		if (stars > 0) {
 			return true;
@@ -173,6 +183,32 @@ public class ProgressManager : MonoBehaviour {
 	public void MarkLevelAchievement(GalaxyType galaxy, int level) 
 	{
 		DataStorage.IncrementLevelAchievement(galaxy, level, 1);
+	}
+
+	public void MarkThreeStarAchievement() 
+	{
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.achievement_perfectionist;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.achievement_perfectionist;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+
+		DataStorage.IncrementAchievement(dataId, 1);
+	}
+
+	public void MarkShipPurchaseAchievement() 
+	{
+#if UNITY_ANDROID
+		string dataId = Remnant.GPGSIds.achievement_space_craft_savant;
+#elif UNITY_IOS
+		string dataId = IOS_DATA_PREFIX + Remnant.GPGSIds.achievement_space_craft_savant;
+#elif !UNITY_ANDROID && !UNITY_IOS
+
+#endif
+		
+		DataStorage.IncrementAchievement(dataId, 1);
 	}
 
 	public void MarkShipPurchased(ShipType ship) 

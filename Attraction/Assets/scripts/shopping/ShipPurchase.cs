@@ -40,6 +40,7 @@ public class ShipPurchase : PurchaseItem {
 	public override void BuyShip() {
 		progress.MarkShipPurchased(shipType);
 		progress.AddResourcesSpent(cost);
+		progress.MarkShipPurchaseAchievement();
 		//progress.SaveShipArmorTimestamp(shipType);
 		//progress.SetShipLives(shipType, ship.armor / 4);
 

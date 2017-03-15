@@ -45,12 +45,12 @@ public class LevelWinPage : MonoBehaviour {
 			ProgressManager.Instance.MarkLevelAchievement(galaxy, level);
 		}
 
-		ProgressManager.Instance.MarkLevelWins(galaxy, level);
-		
-		string story = StoryManager.Instance.GetStory(galaxy, level);
-		if (story != null) {
-			//storyText.text = story;
+		//increment 3 star gain achievement
+		if (sessionStars == 3 && currStars < 3) {
+			ProgressManager.Instance.MarkThreeStarAchievement();
 		}
+
+		ProgressManager.Instance.MarkLevelWins(galaxy, level);
 
 		totalStars = sessionStars;
 		StartCoroutine("WaitToFill");

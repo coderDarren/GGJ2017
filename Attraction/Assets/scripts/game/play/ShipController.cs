@@ -163,7 +163,7 @@ public class ShipController : MonoBehaviour {
     {
     	thrust += thrustAccel * Time.fixedDeltaTime * 75;
     	thrust = Mathf.Clamp(thrust, 0, thrustPower);
-    	vel += thrust * Time.fixedDeltaTime * 75;
+    	vel += thrust;
     	vel = Mathf.Clamp(vel, 0, coast + thrustPower);
     	transform.position += vel * transform.up * Time.fixedDeltaTime;
     }

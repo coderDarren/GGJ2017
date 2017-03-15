@@ -8,7 +8,7 @@ public class GalaxyNode : MonoBehaviour {
 
 	public GalaxyType galaxy;
 	public Sprite padLockIcon;
-	public Image circle, icon;
+	public Image icon;
 	public Text title;
 	public ButtonEvent button;
 	public Color disabledColor;
@@ -26,7 +26,6 @@ public class GalaxyNode : MonoBehaviour {
 		if (!progress.GalaxyIsAvailable(galaxy)) {
 			icon.color = disabledColor;
 			icon.sprite = padLockIcon;
-			circle.color = disabledColor;
 			if (title != null) {
 				title.text = "undiscovered";
 				title.color = disabledColor;

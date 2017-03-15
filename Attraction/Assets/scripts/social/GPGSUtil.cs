@@ -183,7 +183,7 @@ public class GPGSUtil {
 				return level == 1 ? GPGSIds.event_galaxy_03_level_01_attempts :
 					   level == 2 ? GPGSIds.event_galaxy_03_level_02_attempts :
 					   level == 3 ? GPGSIds.event_galaxy_03_level_03_attempts :
-					   level == 4 ? GPGSIds.event_galaxy_01_level_04_attempts :
+					   level == 4 ? GPGSIds.event_galaxy_03_level_04_attempts :
 					   GPGSIds.event_galaxy_03_level_05_attempts;			
 			case GalaxyType.ZAX_GALAXY: 	
 				return level == 1 ? GPGSIds.event_galaxy_04_level_01_attempts :
@@ -238,7 +238,7 @@ public class GPGSUtil {
 				return level == 1 ? GPGSIds.event_galaxy_03_level_01_wins :
 					   level == 2 ? GPGSIds.event_galaxy_03_level_02_wins :
 					   level == 3 ? GPGSIds.event_galaxy_03_level_03_wins :
-					   level == 4 ? GPGSIds.event_galaxy_01_level_04_wins :
+					   level == 4 ? GPGSIds.event_galaxy_03_level_04_wins :
 					   GPGSIds.event_galaxy_03_level_05_wins;			
 			case GalaxyType.ZAX_GALAXY: 	
 				return level == 1 ? GPGSIds.event_galaxy_04_level_01_wins :
@@ -293,7 +293,7 @@ public class GPGSUtil {
 				return level == 1 ? GPGSIds.event_galaxy_03_level_01_stars :
 					   level == 2 ? GPGSIds.event_galaxy_03_level_02_stars :
 					   level == 3 ? GPGSIds.event_galaxy_03_level_03_stars :
-					   level == 4 ? GPGSIds.event_galaxy_01_level_04_stars :
+					   level == 4 ? GPGSIds.event_galaxy_03_level_04_stars :
 					   GPGSIds.event_galaxy_03_level_05_stars;			
 			case GalaxyType.ZAX_GALAXY: 	
 				return level == 1 ? GPGSIds.event_galaxy_04_level_01_stars :
