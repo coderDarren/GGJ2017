@@ -239,7 +239,7 @@ public class ProgressManager : MonoBehaviour {
 		
 		if (dataId == string.Empty) return false;
 		int info = DataStorage.GetLocalData(dataId);
-		if (info == 1) return true;
+		if (info >= 1) return true;
 		return false;
 	}
 
@@ -350,8 +350,8 @@ public class ProgressManager : MonoBehaviour {
 
 #endif
 
-		UpdateGlobalResourceNotification(GetTotalResources());
 		DataStorage.IncrementEvent(dataId, (uint)amount);
+		UpdateGlobalResourceNotification(GetTotalResources());
 	}
 
 	public void UpdateGlobalResourceNotification(int amount) {
