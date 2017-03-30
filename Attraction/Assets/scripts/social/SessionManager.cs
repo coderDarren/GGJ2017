@@ -5,9 +5,11 @@ using Types;
 using Util;
 using Menu;
 
+#if UNITY_ANDROID
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using GooglePlayGames.BasicApi.Events;
+#endif
 
 public class SessionManager : MonoBehaviour {
 
@@ -64,11 +66,13 @@ public class SessionManager : MonoBehaviour {
 	}
 
 	void ConfigureGooglePlay() {
+		#if UNITY_ANDROID
 		PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
 																			  .Build();
 		PlayGamesPlatform.InitializeInstance(config);
 		PlayGamesPlatform.DebugLogEnabled = false;
 		PlayGamesPlatform.Activate();
+		#endif
 	}
 
 	void ProcessAuthentication(bool success) {
@@ -85,7 +89,9 @@ public class SessionManager : MonoBehaviour {
 	}
 
 	void Logout() {
+		#if UNITY_ANDROID
 		PlayGamesPlatform.Instance.SignOut();
+		#endif
 		userName = "Guest";
 		userId = string.Empty;
 		PageManager.Instance.TurnOffPage(PageType.SOCIAL, PageType.SOCIAL_LOAD);

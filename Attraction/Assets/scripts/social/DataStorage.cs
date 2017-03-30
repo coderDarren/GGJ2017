@@ -2,9 +2,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using Types;
+
+#if UNITY_ANDROID
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using GooglePlayGames.BasicApi.Events;
+#endif
+
 using DebugServices;
 using Util;
 
