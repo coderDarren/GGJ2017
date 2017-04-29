@@ -40,6 +40,10 @@ public class SessionManager : MonoBehaviour {
 
 			StartCoroutine("StartupGooglePlayServices");
 
+#elif UNITY_IOS
+
+			StartCoroutine("StartupGameCenter");			
+
 #elif !UNITY_ANDROID
 
 			StartCoroutine("WaitToStart");
@@ -55,6 +59,14 @@ public class SessionManager : MonoBehaviour {
 			yield return null;
 		ConfigureGooglePlay();
 		Social.localUser.Authenticate(ProcessAuthentication);
+	}
+
+	IEnumerator StartupGameCenter() {		
+		yield return new WaitForSeconds(2f);
+		ApplicationLoader.Instance.StartLoading();
+		while (!ApplicationLoader.Instance.sceneIsFadedOut)
+			yield return null;		
+		Social.localUser.Authenticate(ProcessGameCenterAuthentication);
 	}
 
 	IEnumerator WaitToStart() {
@@ -85,6 +97,18 @@ public class SessionManager : MonoBehaviour {
 		}
 		DataStorage.LoadUser(userId, false);
 		//ProgressManager.Instance.AddResources(125000);
+		StartCoroutine("WaitToStart");
+	}
+
+	void ProcessGameCenterAuthentication(bool success) {
+		if(success) {			
+			userName = Social.localUser.userName;
+			userId = Social.localUser.id;
+		} else {
+			userName = "Guest";
+			userId = string.Empty;			
+		}
+		DataStorage.LoadUser(userId, false);
 		StartCoroutine("WaitToStart");
 	}
 

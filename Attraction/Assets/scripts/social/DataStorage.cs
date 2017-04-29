@@ -27,20 +27,19 @@ public class DataStorage {
 	
 	public static void LoadUser(string user, bool reset) {
 
-		USER_ID = user;
+		USER_ID = user;		
 
 		//determine if this user has data stored on this device
 		int localStorageStatus = PlayerPrefs.GetInt(USER_ID+INITIALIZED);
 
-		if (localStorageStatus != 1 || reset) {
-
+		if (localStorageStatus != 1 || reset) {			
 			//loop galaxies starting with index 2 (HOME)
 			int galaxy = 2;
-			for (galaxy = 2; galaxy <= 9; galaxy++) {
+			for (galaxy = 2; galaxy <= 9; galaxy++) {				
 				GalaxyType galaxyType = (GalaxyType)galaxy;
 
 				//loop through levels
-				for (int level = 1; level <= 5; level++) {
+				for (int level = 1; level <= 5; level++) {					
 					string attemptsEventId = GPGSUtil.GalaxyLevelAttemptsId(galaxyType, level);
 					string winsEventId = GPGSUtil.GalaxyLevelWinsId(galaxyType, level);
 					string starsEventId = GPGSUtil.GalaxyLevelStarsId(galaxyType, level);
@@ -54,7 +53,7 @@ public class DataStorage {
 			}
 
 			//loop through ships
-			for (int ship = 1; ship < 9; ship++) {
+			for (int ship = 1; ship < 9; ship++) {				
 				ShipType shipType = (ShipType)ship;
 				string shipEventId = GPGSUtil.ShipId(shipType);
 				string shipLivesId = PrefsUtil.ShipLivesId(shipType);
@@ -77,7 +76,7 @@ public class DataStorage {
 			SaveLocalData(playerShipId, 0); //0 represents the first ship
 
 			//loop through timestamps
-			for (int timestamp = 0; timestamp < 8; timestamp++) {
+			for (int timestamp = 0; timestamp < 8; timestamp++) {				
 				TimestampType timestampType = (TimestampType)timestamp;
 				string timestampId = PrefsUtil.TimestampId(timestampType);
 
@@ -85,7 +84,7 @@ public class DataStorage {
 			}
 
 			//loop through tutorials
-			for (int tutorial = 0; tutorial < 7; tutorial++) {
+			for (int tutorial = 0; tutorial < 7; tutorial++) {				
 				TutorialType tutorialType = (TutorialType)tutorial;
 				string tutorialId = GPGSUtil.TutorialId(tutorialType);
 
@@ -106,7 +105,7 @@ public class DataStorage {
 			//event ships
 			FetchEventForLocalStorage(Remnant.GPGSIds.event_ships_purchased);
 
-			PlayerPrefs.SetInt(USER_ID+INITIALIZED, 1);
+			PlayerPrefs.SetInt(USER_ID+INITIALIZED, 1);			
 		}
 	}
 
