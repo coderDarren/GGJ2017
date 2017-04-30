@@ -5,9 +5,11 @@ using Types;
 using Util;
 using Menu;
 
+#if UNITY_ANDROID
 using GooglePlayGames;
 using GooglePlayGames.BasicApi;
 using GooglePlayGames.BasicApi.Events;
+#endif
 
 public class SessionManager : MonoBehaviour {
 
@@ -38,6 +40,10 @@ public class SessionManager : MonoBehaviour {
 
 			StartCoroutine("StartupGooglePlayServices");
 
+#elif UNITY_IOS
+
+			StartCoroutine("StartupGameCenter");			
+
 #elif !UNITY_ANDROID
 
 			StartCoroutine("WaitToStart");
@@ -55,6 +61,14 @@ public class SessionManager : MonoBehaviour {
 		Social.localUser.Authenticate(ProcessAuthentication);
 	}
 
+	IEnumerator StartupGameCenter() {		
+		yield return new WaitForSeconds(2f);
+		ApplicationLoader.Instance.StartLoading();
+		while (!ApplicationLoader.Instance.sceneIsFadedOut)
+			yield return null;		
+		Social.localUser.Authenticate(ProcessGameCenterAuthentication);
+	}
+
 	IEnumerator WaitToStart() {
 		while (DataStorage.LOADING_USER) {
 			yield return null;
@@ -64,11 +78,13 @@ public class SessionManager : MonoBehaviour {
 	}
 
 	void ConfigureGooglePlay() {
+		#if UNITY_ANDROID
 		PlayGamesClientConfiguration config = new PlayGamesClientConfiguration.Builder()
 																			  .Build();
 		PlayGamesPlatform.InitializeInstance(config);
 		PlayGamesPlatform.DebugLogEnabled = false;
 		PlayGamesPlatform.Activate();
+		#endif
 	}
 
 	void ProcessAuthentication(bool success) {
@@ -84,8 +100,22 @@ public class SessionManager : MonoBehaviour {
 		StartCoroutine("WaitToStart");
 	}
 
+	void ProcessGameCenterAuthentication(bool success) {
+		if(success) {			
+			userName = Social.localUser.userName;
+			userId = Social.localUser.id;
+		} else {
+			userName = "Guest";
+			userId = string.Empty;			
+		}
+		DataStorage.LoadUser(userId, false);
+		StartCoroutine("WaitToStart");
+	}
+
 	void Logout() {
+		#if UNITY_ANDROID
 		PlayGamesPlatform.Instance.SignOut();
+		#endif
 		userName = "Guest";
 		userId = string.Empty;
 		PageManager.Instance.TurnOffPage(PageType.SOCIAL, PageType.SOCIAL_LOAD);
